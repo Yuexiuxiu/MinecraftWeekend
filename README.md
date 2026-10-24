@@ -67,7 +67,11 @@ D:\Website\
    - 点击也能打开二维码；
    - 手机端点按打开；
    - 同时展示 QQ 群和 QQ 频道二维码。
-6. 加入社区区域直接展示两张二维码，群号和频道号可以复制。
+6. 加入社区区域不再直接铺开二维码：
+   - 默认只显示“查看 / 收起二维码”按钮；
+   - 桌面端悬停或点击按钮，才显示 QQ 群与 QQ 频道二维码；
+   - 手机端点按按钮显示；
+   - 群号和频道号仍然可以直接复制。
 7. 顶部导航新增**滚动高亮**：
    - 阅读首页、服务器、公告、FAQ、加入社区等区域时，导航会自动移动到对应高亮状态；
    - 各章节通过 `data-spy-target` 与页面区块关联。
@@ -78,6 +82,11 @@ D:\Website\
 9. 域名与 CNAME 更新为 `mc.minecraftweekend.cn`。
 10. `robots.txt`、`sitemap.xml`、canonical、Open Graph、JSON-LD 全部同步新域名。
 11. 重新生成了 OG 分享封面和 QQ 二维码资源。
+12. 给 CSS/JS 引用加了版本参数 `?v=20261024-2`，避免浏览器继续使用旧版样式或脚本。
+
+> **重要：** 页面 HTML、CSS、JS 必须一起更新。只更新 HTML 而浏览器仍使用旧
+> `style.css` 时，会出现服务器卡片布局错乱、二维码样式失效等现象。
+> 上传最新文件后请使用 `Ctrl + F5` 强制刷新。
 
 ---
 
@@ -303,12 +312,17 @@ QQ 频道：cdcvk4521a
 
 ### 6.6 二维码弹层
 
-顶部导航的二维码面板由以下结构组成：
+二维码默认不显示。页面中共有两处入口：
+
+1. **顶部导航**：桌面端鼠标悬停“加入社区”或点击/触屏点按；
+2. **加入社区区域**：悬停或点击“查看 / 收起二维码”按钮。
+
+两处使用统一结构：
 
 ```html
-<div class="nav-qr-wrap" data-qr-root>
-  <button data-qr-trigger aria-expanded="false" aria-controls="nav-qr-panel">加入社区</button>
-  <div id="nav-qr-panel" data-qr-panel hidden>...</div>
+<div data-qr-root>
+  <button data-qr-trigger aria-expanded="false" aria-controls="qr-panel">查看二维码</button>
+  <div id="qr-panel" data-qr-panel hidden>...</div>
 </div>
 ```
 
@@ -318,6 +332,11 @@ QQ 频道：cdcvk4521a
 - 按钮点击/触屏点按切换；
 - 点击外部、按 Esc、焦点移出后关闭；
 - 移动端菜单收起时自动关闭二维码。
+
+每处面板的 `id` 必须唯一，`aria-controls` 要与对应面板 `id` 一致。
+
+> CSS/JS 的引用带有 `?v=20261024-2`。以后修改 `style.css` 或 `main.js`
+> 时，请同时递增该版本号（例如 `?v=20261025-1`），避免访客长期看到旧缓存。
 
 ---
 
@@ -330,7 +349,9 @@ QQ 频道：cdcvk4521a
 - [ ] QQ 群 870774459 可复制
 - [ ] QQ 频道 cdcvk4521a 可复制
 - [ ] 邮箱 lingyueyue148@163.com 的 `mailto:` 可打开
+- [ ] 初始页面没有直接展开二维码
 - [ ] 顶部导航“加入社区”悬停/点击能显示两张二维码
+- [ ] 加入社区区域的“查看 / 收起二维码”按钮可以展开和收起
 - [ ] 安卓/iOS 点按菜单里的“加入社区”能显示二维码
 - [ ] 两张二维码都能被手机实际扫描
 - [ ] 页面滚动时顶栏高亮会随章节移动
@@ -346,7 +367,8 @@ QQ 频道：cdcvk4521a
 | 现象 | 检查 |
 | --- | --- |
 | 页面还是旧内容 | 等 GitHub Pages 构建完成，使用 Ctrl+F5；检查仓库 `main` 是否已更新 |
-| 二维码弹层不出现 | 确认 `assets/js/main.js` 已上传；查看浏览器控制台 |
+| 服务器卡片排版错乱、二维码直接铺开 | 多半是旧 `style.css` 缓存。确认最新 `assets/css/style.css` 已上传，并强制刷新页面 |
+| 二维码弹层不出现 | 确认 `assets/js/main.js` 已上传；查看浏览器控制台；确认没有被广告拦截器隐藏 |
 | 二维码扫不出来 | 确认图片未被错误裁剪或压缩；保留白色留边 |
 | 导航高亮不移动 | 检查 `data-spy-target` 与区块 `id` 是否完全一致 |
 | 自定义域名失效 | 检查仓库根目录 `CNAME` 内容，以及 DNS 的 CNAME 是否指向 `yuexiuxiu.github.io` |

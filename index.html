@@ -12,7 +12,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="https://mc.minecraftweekend.cn/">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261024-2">
 
   <!-- Open Graph / 社交平台分享信息 -->
   <meta property="og:locale" content="zh_CN">
@@ -389,17 +389,6 @@
             </p>
           </div>
 
-          <aside class="server-showcase__join" aria-label="扫码加入 QQ 群">
-            <p class="qr-panel-kicker">SCAN TO JOIN</p>
-            <figure class="qr-figure">
-              <img src="assets/img/qq-group-qr.png" alt="周末愉快 QQ 群二维码，群号 870774459" width="1000" height="1000" loading="lazy" decoding="async">
-              <figcaption>
-                <span>QQ 群</span>
-                <strong>870774459</strong>
-              </figcaption>
-            </figure>
-            <p>扫码进群，获取服务器地址与最新公告。</p>
-          </aside>
         </article>
 
         <p class="section-note reveal">
@@ -525,34 +514,40 @@
             </ul>
 
             <p class="join-small">
-              电脑端把鼠标移到顶部「加入社区」，手机端点按同一个按钮，都能随时打开 QQ 群与 QQ 频道二维码。
+              电脑端把鼠标移到顶部「加入社区」，手机端点按同一个按钮；也可以使用右侧的二维码按钮。
             </p>
           </div>
 
-          <div class="join-qr-side">
+          <div class="join-qr-side" data-qr-root>
             <div class="join-qr-heading">
               <p class="qr-panel-kicker">QQ GROUP / QQ CHANNEL</p>
               <h3>扫码进群，开始周末。</h3>
+              <p class="join-qr-hint">鼠标悬停或点按按钮后显示二维码，避免占用页面空间。</p>
+              <button class="btn btn--ghost join-qr-toggle" type="button" data-qr-trigger aria-expanded="false" aria-controls="join-qr-panel">
+                查看 / 收起二维码
+              </button>
             </div>
 
-            <div class="join-qr-grid">
-              <figure class="qr-figure">
-                <img src="assets/img/qq-group-qr.png" alt="周末愉快 QQ 群二维码，群号 870774459" width="1000" height="1000" loading="lazy" decoding="async">
-                <figcaption>
-                  <span>QQ 群</span>
-                  <strong>870774459</strong>
-                </figcaption>
-              </figure>
-              <figure class="qr-figure">
-                <img src="assets/img/qq-channel-qr.png" alt="周末愉快 QQ 频道二维码，频道号 cdcvk4521a" width="1000" height="1000" loading="lazy" decoding="async">
-                <figcaption>
-                  <span>QQ 频道</span>
-                  <strong>cdcvk4521a</strong>
-                </figcaption>
-              </figure>
-            </div>
+            <div class="join-qr-panel" id="join-qr-panel" data-qr-panel hidden>
+              <div class="join-qr-grid">
+                <figure class="qr-figure">
+                  <img src="assets/img/qq-group-qr.png" alt="周末愉快 QQ 群二维码，群号 870774459" width="1000" height="1000" loading="lazy" decoding="async">
+                  <figcaption>
+                    <span>QQ 群</span>
+                    <strong>870774459</strong>
+                  </figcaption>
+                </figure>
+                <figure class="qr-figure">
+                  <img src="assets/img/qq-channel-qr.png" alt="周末愉快 QQ 频道二维码，频道号 cdcvk4521a" width="1000" height="1000" loading="lazy" decoding="async">
+                  <figcaption>
+                    <span>QQ 频道</span>
+                    <strong>cdcvk4521a</strong>
+                  </figcaption>
+                </figure>
+              </div>
 
-            <p>用手机 QQ 扫描二维码。群号与频道号也可以直接复制。</p>
+              <p>用手机 QQ 扫描二维码。群号与频道号也可以直接复制。</p>
+            </div>
           </div>
         </div>
       </div>
@@ -729,6 +724,6 @@
   <!-- 复制反馈的无障碍播报区 -->
   <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-toast></div>
 
-  <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/main.js?v=20261024-2" defer></script>
 </body>
 </html>
