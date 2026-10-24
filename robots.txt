@@ -1,0 +1,6 @@
+# 方块周末 · 允许所有常规搜索引擎抓取
+User-agent: *
+Allow: /
+
+# 站点地图地址必须和使用 HTTPS 自定义域名保持一致
+Sitemap: https://mc.minecraftweeend.cn/sitemap.xml

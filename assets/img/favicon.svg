@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="favicon-title favicon-desc">
+  <title id="favicon-title">方块周末</title>
+  <desc id="favicon-desc">一块由绿色草皮和棕色泥土组成的像素方块图标</desc>
+
+  <!-- 深色底与草方块主体，全部由基础几何图形组成 -->
+  <rect width="64" height="64" fill="#07100b"/>
+  <rect x="5" y="5" width="54" height="54" fill="#76543d"/>
+  <rect x="5" y="5" width="54" height="20" fill="#6cac42"/>
+  <rect x="5" y="23" width="54" height="4" fill="#4d7f34"/>
+
+  <!-- 草皮像素高光 -->
+  <rect x="11" y="10" width="8" height="7" fill="#8bd35e"/>
+  <rect x="27" y="14" width="7" height="6" fill="#5b9638"/>
+  <rect x="40" y="8" width="10" height="7" fill="#b0ed7d"/>
+  <rect x="51" y="17" width="5" height="5" fill="#5b9638"/>
+
+  <!-- 草皮边缘的像素垂落 -->
+  <rect x="11" y="25" width="6" height="7" fill="#5e9c3b"/>
+  <rect x="31" y="25" width="5" height="4" fill="#5e9c3b"/>
+  <rect x="47" y="25" width="7" height="8" fill="#4d7f34"/>
+
+  <!-- 泥土纹理 -->
+  <rect x="13" y="37" width="8" height="5" fill="#5d402e"/>
+  <rect x="31" y="33" width="6" height="6" fill="#987154"/>
+  <rect x="45" y="41" width="8" height="5" fill="#5d402e"/>
+  <rect x="20" y="48" width="6" height="5" fill="#987154"/>
+  <rect x="38" y="50" width="10" height="4" fill="#5d402e"/>
+
+  <!-- 左下角小高光，模拟方块受光面 -->
+  <rect x="5" y="5" width="3" height="54" fill="#a1dc72" opacity="0.35"/>
+</svg>
