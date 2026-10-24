@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>页面未生成｜404 · 方块周末</title>
-  <meta name="description" content="你访问的页面不存在或已经被移动。返回方块周末首页，继续浏览服务器与社区信息。">
+  <title>页面未生成｜404 · 周末愉快</title>
+  <meta name="description" content="你访问的页面不存在或已经被移动。返回周末愉快首页，继续浏览服务器与社区信息。">
   <meta name="robots" content="noindex, follow">
-  <meta name="author" content="方块周末">
+  <meta name="author" content="周末愉快">
   <meta name="theme-color" content="#0a120e">
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -20,11 +20,11 @@
 
   <header class="site-header" data-site-header>
     <div class="container header-inner">
-      <a class="brand" href="/index.html" aria-label="方块周末首页">
+      <a class="brand" href="/index.html" aria-label="周末愉快首页">
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-text">
-          <strong>方块周末</strong>
-          <small>BLOCK WEEKEND</small>
+          <strong>周末愉快</strong>
+          <small>Minecraftweekend</small>
         </span>
       </a>
 
@@ -34,7 +34,45 @@
         <a class="nav-link" href="/index.html#notice">公告</a>
         <a class="nav-link" href="/index.html#faq">FAQ</a>
         <a class="nav-link" href="/about.html">关于</a>
-        <a class="nav-join" href="/index.html#join">加入社区</a>
+
+        <div class="nav-qr-wrap" data-qr-root>
+          <button class="nav-join" type="button" data-qr-trigger aria-expanded="false" aria-controls="nav-qr-panel" aria-label="查看 QQ 群与 QQ 频道二维码">
+            <span class="nav-join__icon" aria-hidden="true"></span>
+            加入社区
+          </button>
+
+          <div class="nav-qr-panel" id="nav-qr-panel" data-qr-panel role="group" aria-label="QQ 群与 QQ 频道二维码" hidden>
+            <div class="nav-qr-panel__head">
+              <div>
+                <span class="nav-qr-eyebrow">JOIN / 扫码加入</span>
+                <strong>周末愉快</strong>
+              </div>
+              <button class="nav-qr-close" type="button" data-qr-close aria-label="关闭二维码面板">×</button>
+            </div>
+
+            <div class="nav-qr-grid">
+              <figure class="qr-figure">
+                <img src="/assets/img/qq-group-qr.png" alt="周末愉快 QQ 群二维码，群号 870774459" width="1000" height="1000" loading="lazy" decoding="async">
+                <figcaption>
+                  <span>QQ 群</span>
+                  <strong>870774459</strong>
+                </figcaption>
+              </figure>
+              <figure class="qr-figure">
+                <img src="/assets/img/qq-channel-qr.png" alt="周末愉快 QQ 频道二维码，频道号 cdcvk4521a" width="1000" height="1000" loading="lazy" decoding="async">
+                <figcaption>
+                  <span>QQ 频道</span>
+                  <strong>cdcvk4521a</strong>
+                </figcaption>
+              </figure>
+            </div>
+
+            <div class="nav-qr-panel__foot">
+              <span>手机 QQ 扫一扫</span>
+              <a href="/index.html#join">查看详细加入方式 <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
       </nav>
 
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="打开导航菜单" data-nav-toggle>
@@ -64,7 +102,7 @@
           <h1 id="error-title">这处区块还没生成。</h1>
           <p class="error-lead">
             你访问的页面不存在，可能已经被移动，或者地址中有一个字母迷路了。
-            回到出生点，继续找服务器或看看公告吧。
+            回到出生点，继续看看服务器或加入周末愉快吧。
           </p>
 
           <div class="error-actions">
@@ -104,14 +142,14 @@
     <div class="container">
       <div class="footer-main">
         <div class="footer-brand">
-          <a class="brand" href="/index.html" aria-label="方块周末首页">
+          <a class="brand" href="/index.html" aria-label="周末愉快首页">
             <span class="brand-mark" aria-hidden="true"></span>
             <span class="brand-text">
-              <strong>方块周末</strong>
-              <small>BLOCK WEEKEND</small>
+              <strong>周末愉快</strong>
+              <small>Minecraftweekend</small>
             </span>
           </a>
-          <p>把周末，装进方块世界。<br>一个轻量的 Minecraft 社区落地页。</p>
+          <p>愉快留在周末，用方块搭建我的世界。<br>一个只有一个世界的 Minecraft 生存服。</p>
         </div>
 
         <nav class="footer-nav" aria-label="页脚导航">
@@ -129,15 +167,15 @@
           </div>
           <div>
             <h2>联系</h2>
-            <span>QQ 群号占位</span>
-            <span>Discord 邀请占位</span>
-            <span>联系邮箱占位</span>
+            <a href="mailto:lingyueyue148@163.com">lingyueyue148@163.com</a>
+            <span>QQ 群 870774459</span>
+            <span>QQ 频道 cdcvk4521a</span>
           </div>
         </nav>
       </div>
 
       <div class="footer-bottom">
-        <p>© <span data-current-year>2026</span> 方块周末 · BLOCK WEEKEND</p>
+        <p>© <span data-current-year>2026</span> 周末愉快 · Minecraftweekend</p>
         <p class="footer-legal">
           非 Mojang 官方站点，与 Mojang Studios / Microsoft 无隶属关系。
           Minecraft 名称及相关商标归其权利人所有，页面装饰图形均由 CSS 绘制。

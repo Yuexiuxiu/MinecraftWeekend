@@ -1,6 +1,6 @@
 /* ==========================================================================
-   方块周末 · 站点交互
-   包含：移动端导航、当前年份、复制按钮、轻量滚动出现动画。
+   周末愉快 · 站点交互
+   包含：顶部导航、二维码悬浮/点按面板、滚动高亮、复制按钮、当前年份。
    不收集用户数据，不使用 Cookie、localStorage 或第三方请求。
    ========================================================================== */
 
@@ -10,7 +10,7 @@
   var root = document.documentElement;
   var body = document.body;
 
-  /* ---------- 1. 顶部导航状态 ---------- */
+  /* ---------- 1. 顶部导航滚动状态 ---------- */
   var header = document.querySelector("[data-site-header]");
 
   if (header) {
@@ -22,7 +22,133 @@
     window.addEventListener("scroll", updateHeader, { passive: true });
   }
 
-  /* ---------- 2. 移动端菜单 ---------- */
+  /* ---------- 2. 二维码面板：桌面悬停，移动端点按 ---------- */
+  var closeAllQrPanels = function () {};
+
+  var setupQrPanels = function () {
+    var qrRoots = Array.prototype.slice.call(document.querySelectorAll("[data-qr-root]"));
+    var closeFunctions = [];
+    var canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+    qrRoots.forEach(function (qrRoot) {
+      var trigger = qrRoot.querySelector("[data-qr-trigger]");
+      var panel = qrRoot.querySelector("[data-qr-panel]");
+      var closeButton = panel ? panel.querySelector("[data-qr-close]") : null;
+
+      if (!trigger || !panel) {
+        return;
+      }
+
+      var hoverTimer = null;
+      var isOpen = false;
+
+      var clearHoverTimer = function () {
+        if (hoverTimer) {
+          window.clearTimeout(hoverTimer);
+          hoverTimer = null;
+        }
+      };
+
+      var openPanel = function () {
+        clearHoverTimer();
+        panel.hidden = false;
+        isOpen = true;
+        trigger.setAttribute("aria-expanded", "true");
+        qrRoot.classList.add("is-qr-open");
+      };
+
+      var closePanel = function (returnFocus) {
+        clearHoverTimer();
+        panel.hidden = true;
+        isOpen = false;
+        trigger.setAttribute("aria-expanded", "false");
+        qrRoot.classList.remove("is-qr-open");
+
+        if (returnFocus) {
+          trigger.focus();
+        }
+      };
+
+      closeFunctions.push(function () {
+        closePanel(false);
+      });
+
+      // 点按：安卓/iPhone 与桌面点击都使用这个分支
+      trigger.addEventListener("click", function () {
+        if (isOpen) {
+          closePanel(false);
+        } else {
+          openPanel();
+        }
+      });
+
+      // 桌面端悬停打开；触屏设备不会被 mouseenter 干扰
+      trigger.addEventListener("mouseenter", function () {
+        if (canHover.matches) {
+          openPanel();
+        }
+      });
+
+      qrRoot.addEventListener("mouseenter", clearHoverTimer);
+
+      qrRoot.addEventListener("mouseleave", function () {
+        if (!canHover.matches) {
+          return;
+        }
+
+        // 留一点时间给鼠标从按钮移动到面板，同时避免打断键盘焦点
+        hoverTimer = window.setTimeout(function () {
+          if (!qrRoot.contains(document.activeElement)) {
+            closePanel(false);
+          }
+        }, 180);
+      });
+
+      if (closeButton) {
+        closeButton.addEventListener("click", function () {
+          closePanel(true);
+        });
+      }
+
+      // 点击面板内的链接后关闭面板
+      panel.addEventListener("click", function (event) {
+        if (event.target.closest("a")) {
+          closePanel(false);
+        }
+      });
+
+      // 键盘焦点离开整个二维码区域时关闭
+      qrRoot.addEventListener("focusout", function (event) {
+        if (!qrRoot.contains(event.relatedTarget)) {
+          closePanel(false);
+        }
+      });
+
+      // 点击面板外部关闭
+      document.addEventListener("click", function (event) {
+        if (isOpen && !qrRoot.contains(event.target)) {
+          closePanel(false);
+        }
+      });
+
+      // Esc 关闭并回到触发按钮
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && isOpen) {
+          closePanel(true);
+        }
+      });
+    });
+
+    return function () {
+      closeFunctions.forEach(function (close) {
+        close();
+      });
+    };
+  };
+
+  closeAllQrPanels = setupQrPanels();
+
+  /* ---------- 3. 移动端菜单 ---------- */
   var navToggle = document.querySelector("[data-nav-toggle]");
   var siteNav = document.getElementById("site-menu");
   var navLabel = navToggle ? navToggle.querySelector("[data-nav-label]") : null;
@@ -36,6 +162,11 @@
 
       if (navLabel) {
         navLabel.textContent = open ? "关闭" : "菜单";
+      }
+
+      // 菜单收起时，二维码面板也不应保持展开状态
+      if (!open) {
+        closeAllQrPanels();
       }
     };
 
@@ -86,7 +217,89 @@
     }
   }
 
-  /* ---------- 3. 页脚当前年份 ---------- */
+  /* ---------- 4. 滚动时高亮当前章节 ---------- */
+  var initScrollSpy = function () {
+    var spyLinks = Array.prototype.slice.call(document.querySelectorAll("[data-spy-target]"));
+    var pairs = [];
+
+    spyLinks.forEach(function (link) {
+      var selector = link.getAttribute("data-spy-target");
+      var section = selector ? document.querySelector(selector) : null;
+
+      if (section) {
+        pairs.push({
+          link: link,
+          section: section,
+        });
+      }
+    });
+
+    if (!pairs.length) {
+      return;
+    }
+
+    // 按章节在文档中的实际位置排序，避免「加入」在 DOM 中位于 FAQ 之前造成误判
+    pairs.sort(function (a, b) {
+      return a.section.offsetTop - b.section.offsetTop;
+    });
+
+    var ticking = false;
+
+    var updateActive = function () {
+      ticking = false;
+
+      var headerHeight = header ? header.offsetHeight : 0;
+      var probe = window.scrollY + headerHeight + 90;
+      var activePair = pairs[0];
+      var documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight
+      );
+
+      pairs.forEach(function (pair) {
+        if (pair.section.offsetTop <= probe) {
+          activePair = pair;
+        }
+      });
+
+      // 到达页面底部时，高亮最后一个章节
+      if (window.scrollY + window.innerHeight >= documentHeight - 6) {
+        activePair = pairs[pairs.length - 1];
+      }
+
+      pairs.forEach(function (pair) {
+        var isActive = pair === activePair;
+        pair.link.classList.toggle("is-active", isActive);
+
+        if (pair.link.tagName === "A") {
+          if (isActive) {
+            pair.link.setAttribute(
+              "aria-current",
+              pair.link.getAttribute("data-spy-target") === "#top" ? "page" : "location"
+            );
+          } else {
+            pair.link.removeAttribute("aria-current");
+          }
+        }
+      });
+    };
+
+    var requestUpdate = function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateActive);
+      }
+    };
+
+    updateActive();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    window.addEventListener("load", requestUpdate);
+  };
+
+  initScrollSpy();
+
+  /* ---------- 5. 页脚当前年份 ---------- */
   var yearTargets = document.querySelectorAll("[data-current-year]");
   var currentYear = String(new Date().getFullYear());
 
@@ -94,7 +307,7 @@
     target.textContent = currentYear;
   });
 
-  /* ---------- 4. 复制联系方式 / 服务器地址 ---------- */
+  /* ---------- 6. 复制联系方式 / QQ 群号 ---------- */
   var toast = document.querySelector("[data-toast]");
   var toastTimer = null;
 
@@ -153,7 +366,8 @@
     });
   };
 
-  var copyButtons = document.querySelectorAll(".copy-btn[data-copy]");
+  // 所有带 data-copy 的按钮都可用（包括小型复制按钮和主按钮样式）
+  var copyButtons = document.querySelectorAll("[data-copy]");
   var buttonTimers = new WeakMap();
 
   copyButtons.forEach(function (button) {
@@ -192,7 +406,7 @@
     });
   });
 
-  /* ---------- 5. 滚动出现动画 ---------- */
+  /* ---------- 7. 滚动出现动画 ---------- */
   var revealItems = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
   var reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   var supportsObserver = "IntersectionObserver" in window;
