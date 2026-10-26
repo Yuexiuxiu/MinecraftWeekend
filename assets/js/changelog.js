@@ -147,6 +147,21 @@
     }
   };
 
+  var normalizeChanges = function (rawChanges) {
+    return Array.isArray(rawChanges)
+      ? rawChanges
+          .filter(function (change) {
+            return change && change.type && change.text;
+          })
+          .map(function (change) {
+            return {
+              type: ALLOWED_TAGS.indexOf(change.type) !== -1 ? change.type : "调整",
+              text: String(change.text),
+            };
+          })
+      : [];
+  };
+
   var normalizePayload = function (payload) {
     if (!payload || !Array.isArray(payload.entries)) {
       throw new Error("更新日志数据格式不正确");
@@ -167,18 +182,29 @@
           tags.push("重要");
         }
 
-        var changes = Array.isArray(raw.changes)
-          ? raw.changes
-              .filter(function (change) {
-                return change && change.type && change.text;
-              })
-              .map(function (change) {
+        var changes = normalizeChanges(raw.changes);
+        var sections = Array.isArray(raw.sections)
+          ? raw.sections
+              .map(function (section) {
                 return {
-                  type: ALLOWED_TAGS.indexOf(change.type) !== -1 ? change.type : "调整",
-                  text: String(change.text),
+                  title: String((section && section.title) || "本次更新"),
+                  changes: normalizeChanges(section && section.changes),
                 };
               })
+              .filter(function (section) {
+                return section.changes.length > 0;
+              })
           : [];
+
+        if (!sections.length && changes.length) {
+          sections = [{ title: "本次更新", changes: changes }];
+        }
+
+        if (sections.length) {
+          changes = sections.reduce(function (all, section) {
+            return all.concat(section.changes);
+          }, []);
+        }
 
         return {
           id: normalizeId(raw.id || raw.version),
@@ -186,9 +212,11 @@
           date: String(raw.date),
           title: String(raw.title),
           summary: String(raw.summary || ""),
+          includes: String(raw.includes || "").trim(),
           important: Boolean(raw.important),
           tags: tags,
           changes: changes,
+          sections: sections,
         };
       })
       .sort(function (a, b) {
@@ -344,7 +372,8 @@
     page = {
       root: pageRoot,
       loading: pageRoot.querySelector("[data-changelog-loading]"),
-      list: pageRoot.querySelector("[data-changelog-list]"),
+      index: pageRoot.querySelector("[data-changelog-index]"),
+      article: pageRoot.querySelector("[data-changelog-article]"),
       error: pageRoot.querySelector("[data-changelog-error]"),
       empty: pageRoot.querySelector("[data-changelog-empty]"),
       count: pageRoot.querySelector("[data-changelog-count]"),
@@ -357,7 +386,7 @@
     };
   }
 
-  var setStateVisibility = function (loading, error, empty, list) {
+  var setStateVisibility = function (loading, error, empty, article) {
     if (!page) {
       return;
     }
@@ -371,8 +400,11 @@
     if (page.empty) {
       page.empty.hidden = !empty;
     }
-    if (page.list) {
-      page.list.hidden = !list;
+    if (page.article) {
+      page.article.hidden = !article;
+    }
+    if (page.index) {
+      page.index.hidden = !article;
     }
   };
 
@@ -415,16 +447,6 @@
 
     state.readIds.add(entryId);
     saveReadIds();
-
-    var card = document.querySelector('[data-changelog-entry="' + entryId + '"]');
-    if (card) {
-      card.classList.remove("is-unread");
-      var badge = card.querySelector("[data-unread-badge]");
-      if (badge) {
-        badge.remove();
-      }
-    }
-
     updateUnreadUi();
   };
 
@@ -432,93 +454,6 @@
     var badge = make("span", "unread-badge", "未读");
     badge.setAttribute("data-unread-badge", "");
     return badge;
-  };
-
-  var createChangelogItem = function (entry) {
-    var unread = state.storageAvailable && !state.readIds.has(entry.id);
-    var article = make(
-      "article",
-      "changelog-item" +
-        (entry.important ? " is-important" : "") +
-        (unread ? " is-unread" : "")
-    );
-    article.id = entry.id;
-    article.setAttribute("data-changelog-entry", entry.id);
-
-    var node = make("span", "changelog-node");
-    node.setAttribute("aria-hidden", "true");
-    article.appendChild(node);
-
-    var card = make("div", "changelog-card");
-
-    var meta = make("div", "changelog-meta");
-    meta.appendChild(make("span", "version-badge", entry.version));
-
-    var time = make("time", "changelog-date", formatDate(entry.date));
-    time.setAttribute("datetime", entry.date);
-    meta.appendChild(time);
-
-    if (entry.important) {
-      meta.appendChild(make("span", "important-flag", "重点"));
-    }
-
-    if (unread) {
-      meta.appendChild(createUnreadBadge());
-    }
-
-    var tags = make("div", "changelog-tags");
-    entry.tags.forEach(function (tag) {
-      tags.appendChild(createTagChip(tag));
-    });
-    meta.appendChild(tags);
-
-    var title = make("h2", "changelog-title", entry.title);
-    var summary = make("p", "changelog-summary", entry.summary);
-
-    var details = document.createElement("details");
-    details.className = "changelog-details";
-
-    var summaryBar = document.createElement("summary");
-    var summaryText = make(
-      "span",
-      null,
-      "展开变更明细" + (entry.changes.length ? " · " + entry.changes.length + " 项" : "")
-    );
-    var chevron = make("span", "details-chevron");
-    chevron.setAttribute("aria-hidden", "true");
-    summaryBar.appendChild(summaryText);
-    summaryBar.appendChild(chevron);
-    details.appendChild(summaryBar);
-
-    if (entry.changes.length) {
-      var list = make("ul", "changelog-changes");
-      entry.changes.forEach(function (change) {
-        var item = make("li", "changelog-change");
-        item.appendChild(
-          make("span", "change-type " + getTagClass(change.type), change.type)
-        );
-        item.appendChild(make("span", "change-text", change.text));
-        list.appendChild(item);
-      });
-      details.appendChild(list);
-    } else {
-      details.appendChild(
-        make("p", "change-empty", "这个版本没有填写详细变更。")
-      );
-    }
-
-    details.addEventListener("toggle", function () {
-      if (details.open) {
-        markEntryRead(entry.id);
-      }
-    });
-
-    card.appendChild(meta);
-    card.appendChild(title);
-    card.appendChild(summary);
-    card.appendChild(details);
-    article.appendChild(card);
-    return article;
   };
 
   var getFilteredEntries = function () {
@@ -545,83 +480,264 @@
     });
   };
 
-  var renderChangelogList = function () {
+  var formatChineseDate = function (value) {
+    var parts = String(value || "").split("-");
+    if (parts.length !== 3) {
+      return formatDate(value);
+    }
+
+    return (
+      parts[0] +
+      " 年 " +
+      Number(parts[1]) +
+      " 月 " +
+      Number(parts[2]) +
+      " 日"
+    );
+  };
+
+  var scrollToLog = function () {
+    var article = page && page.root.querySelector(".log-main");
+    if (!article) {
+      return;
+    }
+
+    var top = article.getBoundingClientRect().top + window.scrollY - 86;
+    var root = document.documentElement;
+    var previousBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(0, Math.max(0, top));
+    root.style.scrollBehavior = previousBehavior;
+  };
+
+  var buildIndex = function (entries) {
+    if (!page || !page.index) {
+      return;
+    }
+
+    page.index.textContent = "";
+    page.index.hidden = false;
+
+    if (!entries.length) {
+      page.index.appendChild(
+        make("p", "log-index__empty", "这个筛选下没有版本。")
+      );
+      return;
+    }
+
+    var currentYear = "";
+    var fragment = document.createDocumentFragment();
+
+    entries.forEach(function (entry) {
+      var year = entry.date.slice(0, 4);
+      if (year !== currentYear) {
+        currentYear = year;
+        fragment.appendChild(make("p", "log-index__year", year));
+      }
+
+      var unread = state.storageAvailable && !state.readIds.has(entry.id);
+      var active = state.activeId === entry.id;
+      var link = make(
+        "a",
+        "log-index__item" +
+          (active ? " is-active" : "") +
+          (unread ? " is-unread" : "")
+      );
+      link.href = "#" + entry.id;
+      link.setAttribute("data-log-select", entry.id);
+
+      if (active) {
+        link.setAttribute("aria-current", "true");
+      }
+
+      var meta = make("span", "log-index__meta");
+      meta.appendChild(make("span", "log-index__version", entry.version));
+
+      var time = make("time", "log-index__date", formatDate(entry.date));
+      time.setAttribute("datetime", entry.date);
+      meta.appendChild(time);
+
+      if (unread) {
+        var dot = make("span", "log-index__dot");
+        dot.setAttribute("aria-label", "未读");
+        meta.appendChild(dot);
+      }
+
+      link.appendChild(meta);
+      link.appendChild(make("span", "log-index__title", entry.title));
+      fragment.appendChild(link);
+    });
+
+    page.index.appendChild(fragment);
+  };
+
+  var buildPagerLink = function (entry, label, isNext) {
+    var link = make(
+      "a",
+      "log-pager__link" + (isNext ? " log-pager__link--next" : "")
+    );
+    link.href = "#" + entry.id;
+    link.setAttribute("data-log-select", entry.id);
+    link.appendChild(make("span", "log-pager__label", label));
+    link.appendChild(
+      make("strong", "log-pager__title", entry.version + " · " + entry.title)
+    );
+    return link;
+  };
+
+  var buildArticle = function (entry) {
+    if (!page || !page.article) {
+      return;
+    }
+
+    var article = page.article;
+    article.textContent = "";
+    article.id = entry.id;
+    article.className =
+      "log-article" + (entry.important ? " log-article--important" : "");
+
+    var meta = make("div", "log-article__meta");
+    meta.appendChild(make("span", "version-badge", entry.version));
+
+    var time = make("time", "log-article__date", formatChineseDate(entry.date));
+    time.setAttribute("datetime", entry.date);
+    meta.appendChild(time);
+
+    if (entry.important) {
+      meta.appendChild(make("span", "important-flag", "重点"));
+    }
+
+    var title = make("h2", "log-article__title", entry.title);
+    title.id = "log-article-title";
+    article.setAttribute("aria-labelledby", title.id);
+
+    article.appendChild(meta);
+    article.appendChild(title);
+
+    if (entry.summary) {
+      article.appendChild(make("p", "log-article__summary", entry.summary));
+    }
+
+    var includes = entry.includes || entry.tags.join("、") || "版本更新";
+    var tip = make("div", "log-tip");
+    tip.appendChild(make("span", "log-tip__label", "本次更新包括"));
+    tip.appendChild(make("strong", null, includes));
+    article.appendChild(tip);
+
+    if (!entry.sections.length) {
+      article.appendChild(
+        make("p", "change-empty", "这个版本没有填写详细变更。")
+      );
+    } else {
+      entry.sections.forEach(function (group) {
+        var section = make("section", "log-section");
+        var heading = make("h3", "log-section__title");
+        heading.appendChild(make("span", "log-section__mark"));
+        heading.appendChild(document.createTextNode(group.title));
+        section.appendChild(heading);
+
+        var list = make("ul", "log-change-list");
+        group.changes.forEach(function (change) {
+          var item = make("li", "log-change");
+          item.appendChild(
+            make(
+              "strong",
+              "log-change__type " + getTagClass(change.type),
+              change.type
+            )
+          );
+          item.appendChild(make("span", "log-change__text", change.text));
+          list.appendChild(item);
+        });
+
+        section.appendChild(list);
+        article.appendChild(section);
+      });
+    }
+
+    var tags = make("div", "log-tags");
+    tags.appendChild(make("span", "log-tags__label", "标签"));
+    entry.tags.forEach(function (tag) {
+      tags.appendChild(createTagChip(tag));
+    });
+    article.appendChild(tags);
+
+    var entryIndex = state.entries.findIndex(function (item) {
+      return item.id === entry.id;
+    });
+    var newer = entryIndex > 0 ? state.entries[entryIndex - 1] : null;
+    var older =
+      entryIndex >= 0 && entryIndex < state.entries.length - 1
+        ? state.entries[entryIndex + 1]
+        : null;
+
+    if (newer || older) {
+      var pager = make("nav", "log-pager");
+      pager.setAttribute("aria-label", "版本导航");
+      if (newer) {
+        pager.appendChild(buildPagerLink(newer, "较新一篇", false));
+      }
+      if (older) {
+        pager.appendChild(buildPagerLink(older, "较旧一篇", true));
+      }
+      article.appendChild(pager);
+    }
+  };
+
+  var selectEntry = function (entry, options) {
+    if (!entry || !page) {
+      return;
+    }
+
+    var settings = options || {};
+    state.activeId = entry.id;
+    markEntryRead(entry.id);
+    buildArticle(entry);
+    buildIndex(getFilteredEntries());
+
+    if (settings.updateHash !== false) {
+      window.history.replaceState(null, "", "#" + entry.id);
+    }
+
+    if (settings.scroll) {
+      scrollToLog();
+    }
+  };
+
+  var renderLog = function () {
     if (!page) {
       return;
     }
 
     var entries = getFilteredEntries();
-    page.list.textContent = "";
     setFiltersDisabled(false);
-    setStateVisibility(false, false, false, true);
-    updateUnreadUi();
+    updateFilterButtons();
 
     if (!entries.length) {
+      page.index.hidden = true;
       setStateVisibility(false, false, true, false);
+      page.count.textContent = "0 个版本";
 
       if (page.empty) {
-        var text = page.empty.querySelector("[data-empty-text]");
-        if (text) {
-          text.textContent = state.entries.length
+        var emptyText = page.empty.querySelector("[data-empty-text]");
+        if (emptyText) {
+          emptyText.textContent = state.entries.length
             ? "这个筛选下暂时没有记录，换一个标签试试。"
             : "还没有更新记录。下一版本见。";
         }
       }
-
-      if (page.count) {
-        page.count.textContent = "共 0 个版本";
-      }
       return;
     }
 
-    var fragment = document.createDocumentFragment();
-    entries.forEach(function (entry) {
-      fragment.appendChild(createChangelogItem(entry));
-    });
-    page.list.appendChild(fragment);
+    setStateVisibility(false, false, false, true);
+    page.count.textContent = entries.length + " 个版本";
 
-    if (page.count) {
-      page.count.textContent =
-        "共 " + entries.length + " 个版本 · 按时间倒序";
-    }
-  };
+    var active = entries.filter(function (entry) {
+      return entry.id === state.activeId;
+    })[0] || entries[0];
 
-  var openHashTarget = function () {
-    if (!page || !window.location.hash) {
-      return;
-    }
-
-    var target = document.getElementById(window.location.hash.slice(1));
-    if (!target || !target.classList.contains("changelog-item")) {
-      return;
-    }
-
-    var details = target.querySelector("details");
-    if (details) {
-      details.open = true;
-    }
-
-    var scrollToTarget = function () {
-      var top = target.getBoundingClientRect().top + window.scrollY - 90;
-      var root = document.documentElement;
-      var previousBehavior = root.style.scrollBehavior;
-      root.style.scrollBehavior = "auto";
-      window.scrollTo(0, Math.max(0, top));
-      root.style.scrollBehavior = previousBehavior;
-    };
-
-    // 等 load 事件完成后再滚动，避免浏览器对初始 #fragment 的定位把它拉回顶部
-    if (document.readyState === "complete") {
-      window.setTimeout(scrollToTarget, 120);
-    } else {
-      window.addEventListener(
-        "load",
-        function () {
-          window.setTimeout(scrollToTarget, 120);
-        },
-        { once: true }
-      );
-    }
+    selectEntry(active, { updateHash: false });
+    updateUnreadUi();
   };
 
   var injectStructuredData = function () {
@@ -689,11 +805,18 @@
     }
 
     state.readIds = loadReadIds();
-    renderChangelogList();
-    updateFilterButtons();
-    updateUnreadUi();
+
+    var hashId = window.location.hash.slice(1);
+    var hashEntry = state.entries.filter(function (entry) {
+      return entry.id === hashId;
+    })[0];
+
+    if (hashEntry) {
+      state.activeId = hashEntry.id;
+    }
+
+    renderLog();
     injectStructuredData();
-    openHashTarget();
   };
 
   var bindPageEvents = function () {
@@ -709,8 +832,34 @@
         }
 
         state.activeFilter = filter;
-        updateFilterButtons();
-        renderChangelogList();
+        renderLog();
+
+        if (state.activeId) {
+          window.history.replaceState(null, "", "#" + state.activeId);
+        }
+      });
+    });
+
+    page.root.addEventListener("click", function (event) {
+      var trigger = event.target.closest("[data-log-select]");
+      if (!trigger || !page.root.contains(trigger)) {
+        return;
+      }
+
+      event.preventDefault();
+
+      var entryId = trigger.getAttribute("data-log-select");
+      var entry = state.entries.filter(function (item) {
+        return item.id === entryId;
+      })[0];
+
+      if (!entry) {
+        return;
+      }
+
+      selectEntry(entry, {
+        updateHash: true,
+        scroll: window.matchMedia("(max-width: 980px)").matches,
       });
     });
 
@@ -724,7 +873,8 @@
           state.readIds.add(entry.id);
         });
         saveReadIds();
-        renderChangelogList();
+        updateUnreadUi();
+        buildIndex(getFilteredEntries());
       });
     }
 
@@ -733,6 +883,21 @@
         loadPageData();
       });
     }
+
+    window.addEventListener("hashchange", function () {
+      if (!state.loaded) {
+        return;
+      }
+
+      var entryId = window.location.hash.slice(1);
+      var entry = state.entries.filter(function (item) {
+        return item.id === entryId;
+      })[0];
+
+      if (entry) {
+        selectEntry(entry, { updateHash: false });
+      }
+    });
   };
 
   /* ---------- 数据加载 ---------- */
@@ -829,14 +994,14 @@
 
   var latestSources = [
     {
-      source: "changelog.json",
-      page: "changelog.html",
-      label: "网站",
-    },
-    {
       source: "server-changelog.json",
       page: "server-changelog.html",
       label: "游戏服务器",
+    },
+    {
+      source: "changelog.json",
+      page: "changelog.html",
+      label: "网站",
     },
   ];
 

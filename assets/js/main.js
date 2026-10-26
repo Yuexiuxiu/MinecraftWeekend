@@ -406,6 +406,131 @@
     });
   });
 
+  /* ---------- 6.1 点击二维码拉起 QQ ---------- */
+  var qqLaunching = false;
+  var qqLaunchTimer = null;
+
+  var buildQqScheme = function (kind, value) {
+    if (kind === "channel") {
+      return (
+        "mqqguild://guild/share?_wv=3&_wwv=128&appChannel=share&inviteCode=" +
+        encodeURIComponent(value)
+      );
+    }
+
+    return (
+      "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=" +
+      encodeURIComponent(value) +
+      "&card_type=group&source=qrcode"
+    );
+  };
+
+  var launchQq = function (image) {
+    var kind = image.getAttribute("data-qq-kind");
+    var value = image.getAttribute("data-qq-value");
+
+    if (!kind || !value || qqLaunching) {
+      return;
+    }
+
+    qqLaunching = true;
+    window.clearTimeout(qqLaunchTimer);
+    qqLaunchTimer = window.setTimeout(function () {
+      qqLaunching = false;
+    }, 1800);
+
+    // 在用户点击的当下先复制，避免稍后浏览器取消剪贴板授权
+    var copyPromise = copyText(value)
+      .then(function () {
+        return true;
+      })
+      .catch(function () {
+        return false;
+      });
+
+    var scheme = buildQqScheme(kind, value);
+    var pageLeft = false;
+    var launchFrame = document.createElement("iframe");
+
+    launchFrame.setAttribute("aria-hidden", "true");
+    launchFrame.setAttribute("tabindex", "-1");
+    launchFrame.style.cssText =
+      "position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;border:0;";
+
+    var onVisibilityChange = function () {
+      if (document.visibilityState === "hidden") {
+        pageLeft = true;
+      }
+    };
+
+    var onWindowBlur = function () {
+      pageLeft = true;
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", onWindowBlur, { once: true });
+    document.body.appendChild(launchFrame);
+
+    try {
+      launchFrame.src = scheme;
+    } catch (error) {
+      pageLeft = false;
+    }
+
+    window.setTimeout(function () {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", onWindowBlur);
+      launchFrame.remove();
+
+      if (!pageLeft) {
+        copyPromise.then(function (copied) {
+          var label = kind === "channel" ? "QQ 频道码" : "QQ 群号";
+
+          if (copied) {
+            showToast(
+              "拉取失败，已将 " +
+                label +
+                " " +
+                value +
+                " 复制到剪贴板，可前往 QQ 手动搜索加入"
+            );
+          } else {
+            showToast(
+              "拉取失败，自动复制没成功，请前往 QQ 手动搜索 " +
+                label +
+                " " +
+                value
+            );
+          }
+        });
+      }
+    }, 1500);
+  };
+
+  document.addEventListener("click", function (event) {
+    var image = event.target.closest("img[data-qq-kind]");
+    if (!image) {
+      return;
+    }
+
+    event.preventDefault();
+    launchQq(image);
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    var image = event.target.closest("img[data-qq-kind]");
+    if (!image) {
+      return;
+    }
+
+    event.preventDefault();
+    launchQq(image);
+  });
+
   /* ---------- 7. 滚动出现动画 ---------- */
   var revealItems = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
   var reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -482,14 +607,14 @@
       '<button class="qr-dialog__close" type="button" data-qr-dialog-close aria-label="关闭二维码弹层">×</button>' +
       '<p class="qr-panel-kicker">JOIN THE WORLD</p>' +
       '<h2 id="qr-dialog-title">扫码加入周末愉快</h2>' +
-      '<p class="qr-dialog__lead">手机 QQ 扫一扫；群号与频道号也可以直接在加入社区区域复制。</p>' +
+      '<p class="qr-dialog__lead">点击二维码拉起 QQ；手机扫码也可以。拉起失败会自动复制群号或频道码。</p>' +
       '<div class="qr-dialog__grid">' +
       '<figure class="qr-figure">' +
-      '<img src="/assets/img/qq-group-qr.png" alt="周末愉快 QQ 群二维码，群号 870774459" width="1000" height="1000" loading="lazy" decoding="async">' +
+      '<img src="/assets/img/qq-group-qr.png" alt="周末愉快 QQ 群二维码，群号 870774459" width="1000" height="1000" loading="lazy" decoding="async" data-qq-kind="group" data-qq-value="870774459" tabindex="0" role="button" aria-label="点击拉起 QQ 群 870774459；失败会复制群号" title="点击拉起 QQ 群；失败会复制群号">' +
       '<figcaption><span>QQ 群</span><strong>870774459</strong></figcaption>' +
       "</figure>" +
       '<figure class="qr-figure">' +
-      '<img src="/assets/img/qq-channel-qr.png" alt="周末愉快 QQ 频道二维码，频道号 cdcvk4521a" width="1000" height="1000" loading="lazy" decoding="async">' +
+      '<img src="/assets/img/qq-channel-qr.png" alt="周末愉快 QQ 频道二维码，频道号 cdcvk4521a" width="1000" height="1000" loading="lazy" decoding="async" data-qq-kind="channel" data-qq-value="cdcvk4521a" tabindex="0" role="button" aria-label="点击拉起 QQ 频道 cdcvk4521a；失败会复制频道码" title="点击拉起 QQ 频道；失败会复制频道码">' +
       '<figcaption><span>QQ 频道</span><strong>cdcvk4521a</strong></figcaption>' +
       "</figure>" +
       "</div>" +
