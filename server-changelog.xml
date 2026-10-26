@@ -10,11 +10,11 @@
     <atom:link href="https://mc.minecraftweekend.cn/server-changelog.xml" rel="self" type="application/rss+xml"/>
 
     <item>
-      <title>26.50 · 生存服 26.50 版本说明</title>
-      <link>https://mc.minecraftweekend.cn/server-changelog.html#server-26-50</link>
-      <guid isPermaLink="true">https://mc.minecraftweekend.cn/server-changelog.html#server-26-50</guid>
+      <title>v0.0.1 · 生存服 26.50 版本说明</title>
+      <link>https://mc.minecraftweekend.cn/server-changelog.html#server-v0-0-1</link>
+      <guid isPermaLink="true">https://mc.minecraftweekend.cn/server-changelog.html#server-v0-0-1</guid>
       <pubDate>Mon, 26 Oct 2026 10:00:00 +0800</pubDate>
-      <description>当前生存服使用 26.50 版本：只有一个世界，不设二服，不需要正版验证。服务器地址与开服信息请在 QQ 群获取。</description>
+      <description>日志版本从 0.0.1 开始，对应服务器版本 26.50：只有一个世界，不设二服，不需要正版验证。服务器地址与开服信息请在 QQ 群获取。</description>
     </item>
   </channel>
 </rss>

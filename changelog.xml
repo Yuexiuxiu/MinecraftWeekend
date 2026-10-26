@@ -10,41 +10,41 @@
     <atom:link href="https://mc.minecraftweekend.cn/changelog.xml" rel="self" type="application/rss+xml"/>
 
     <item>
-      <title>v1.3.0 · 更新日志拆成两份，页面也重新排了</title>
-      <link>https://mc.minecraftweekend.cn/changelog.html#v1-3-0</link>
-      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v1-3-0</guid>
+      <title>v0.0.5 · 更新日志拆成两份，页面也重新排了</title>
+      <link>https://mc.minecraftweekend.cn/changelog.html#v0-0-5</link>
+      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v0-0-5</guid>
       <pubDate>Mon, 26 Oct 2026 10:00:00 +0800</pubDate>
-      <description>网站更新和游戏服务器更新分开放。首页各显示一条，两个页面顶部能切换；日志页正文改回居中，不再全部靠左。</description>
+      <description>打开更新日志默认进入游戏服务器日志；两个页面顶部左边是服务器、右边是网站。日志页改成左边版本列表、右边单篇文章，正文不再全部靠左；版本号重新从 0.0.1 排起。</description>
     </item>
 
     <item>
-      <title>v1.2.0 · 版本时间线与更新日志上线</title>
-      <link>https://mc.minecraftweekend.cn/changelog.html#v1-2-0</link>
-      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v1-2-0</guid>
+      <title>v0.0.4 · 版本时间线与更新日志上线</title>
+      <link>https://mc.minecraftweekend.cn/changelog.html#v0-0-4</link>
+      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v0-0-4</guid>
       <pubDate>Mon, 26 Oct 2026 10:00:00 +0800</pubDate>
       <description>新增独立更新日志页、首页最近更新摘要、RSS 与未读标记。后续记录版本只需维护 changelog.json。</description>
     </item>
 
     <item>
-      <title>v1.1.1 · 二维码显示与移动端修复</title>
-      <link>https://mc.minecraftweekend.cn/changelog.html#v1-1-1</link>
-      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v1-1-1</guid>
+      <title>v0.0.3 · 二维码显示与移动端修复</title>
+      <link>https://mc.minecraftweekend.cn/changelog.html#v0-0-3</link>
+      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v0-0-3</guid>
       <pubDate>Sat, 24 Oct 2026 10:00:00 +0800</pubDate>
       <description>二维码改为悬停或点按后显示，补充弹层关闭按钮，调整移动端复制按钮并更新资源缓存版本。</description>
     </item>
 
     <item>
-      <title>v1.1.0 · 品牌、域名与加入方式更新</title>
-      <link>https://mc.minecraftweekend.cn/changelog.html#v1-1-0</link>
-      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v1-1-0</guid>
+      <title>v0.0.2 · 品牌、域名与加入方式更新</title>
+      <link>https://mc.minecraftweekend.cn/changelog.html#v0-0-2</link>
+      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v0-0-2</guid>
       <pubDate>Sat, 24 Oct 2026 10:00:00 +0800</pubDate>
       <description>站点更名为周末愉快 / Minecraftweekend，启用新域名，加入 QQ 群、QQ 频道与邮箱信息。</description>
     </item>
 
     <item>
-      <title>v1.0.0 · 周末愉快站点上线</title>
-      <link>https://mc.minecraftweekend.cn/changelog.html#v1-0-0</link>
-      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v1-0-0</guid>
+      <title>v0.0.1 · 周末愉快站点上线</title>
+      <link>https://mc.minecraftweekend.cn/changelog.html#v0-0-1</link>
+      <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v0-0-1</guid>
       <pubDate>Sun, 18 Oct 2026 10:00:00 +0800</pubDate>
       <description>完成首版纯静态站点：首页、关于、隐私政策、自定义 404 与服务器介绍。</description>
     </item>
