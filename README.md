@@ -1,6 +1,6 @@
 # 周末愉快 · Minecraftweekend
 
-一个 Minecraft 生存服务器与社区信息页，当前通过 **GitHub Pages** 发布。
+一个 Minecraft 生存服务器信息页，通过 **GitHub Pages** 发布。
 
 - 线上地址：<https://mc.minecraftweekend.cn/>
 - GitHub 仓库：<https://github.com/Yuexiuxiu/MinecraftWeekend>
