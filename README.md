@@ -112,7 +112,7 @@ server-changelog.json
   "id": "v1-3-0",
   "version": "v1.3.0",
   "date": "2026-10-26",
-  "title": "更新日志拆分为网站与游戏服务器两套",
+  "title": "更新日志拆成两份，页面也重新排了",
   "summary": "一句话摘要，会显示在首页公告板和日志页。",
   "important": true,
   "tags": ["新增", "重要"],

@@ -14,7 +14,22 @@
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="alternate" type="application/rss+xml" title="周末愉快 · 网站更新" href="https://mc.minecraftweekend.cn/changelog.xml">
   <link rel="alternate" type="application/rss+xml" title="周末愉快 · 服务器更新" href="https://mc.minecraftweekend.cn/server-changelog.xml">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261026-1">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261026-2">
+  <style>
+    /* 旧版全站样式尚未更新时，也保证日志正文居中，不再贴左 */
+    .changelog-shell {
+      width: calc(100% - 3rem);
+      max-width: 760px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    @media (max-width: 660px) {
+      .changelog-shell {
+        width: calc(100% - 2rem);
+      }
+    }
+  </style>
 
   <meta property="og:locale" content="zh_CN">
   <meta property="og:type" content="website">
@@ -353,7 +368,7 @@
 
   <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-toast></div>
 
-  <script src="assets/js/main.js?v=20261026-1" defer></script>
-  <script src="assets/js/changelog.js?v=20261026-1" defer></script>
+  <script src="assets/js/main.js?v=20261026-2" defer></script>
+  <script src="assets/js/changelog.js?v=20261026-2" defer></script>
 </body>
 </html>

@@ -10,11 +10,11 @@
     <atom:link href="https://mc.minecraftweekend.cn/changelog.xml" rel="self" type="application/rss+xml"/>
 
     <item>
-      <title>v1.3.0 · 更新日志拆分为网站与游戏服务器两套</title>
+      <title>v1.3.0 · 更新日志拆成两份，页面也重新排了</title>
       <link>https://mc.minecraftweekend.cn/changelog.html#v1-3-0</link>
       <guid isPermaLink="true">https://mc.minecraftweekend.cn/changelog.html#v1-3-0</guid>
       <pubDate>Mon, 26 Oct 2026 10:00:00 +0800</pubDate>
-      <description>网站日志与游戏服务器日志分开展示，新增 server-changelog.html、server-changelog.json 与 server-changelog.xml；首页各取一条摘要，未读状态分别保存。</description>
+      <description>网站更新和游戏服务器更新分开放。首页各显示一条，两个页面顶部能切换；日志页正文改回居中，不再全部靠左。</description>
     </item>
 
     <item>
