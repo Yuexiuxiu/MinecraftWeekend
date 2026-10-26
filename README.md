@@ -196,7 +196,7 @@ server-changelog.json
 - 字体使用 `system-ui` 系统字体栈。
 - 二维码图片全部 `loading="lazy"`；首屏不加载二维码。
 - 更新日志通过 fetch 异步读取，不阻塞首屏 HTML/CSS。
-- 主样式和主脚本使用 `?v=20261026-1` 版本参数，避免旧缓存。
+- 主样式和主脚本使用 `?v=20261026-2` 版本参数，避免旧缓存。
 - 页面体积不大，GitHub Pages 会进行传输压缩。
 
 > “首屏 1.5 秒”取决于访问者网络、DNS、GitHub Pages 跨境链路和设备性能，静态站只能尽量减少阻塞资源，不能承诺所有网络环境都低于 1.5 秒。
@@ -239,6 +239,22 @@ mc.minecraftweekend.cn
 
 更新完文件后使用 `Ctrl + F5` 强制刷新，避免浏览器继续使用旧版 CSS/JS。
 
+### 6.1 两个日志页一直显示“正在读取”
+
+先确认以下三个文件已经上传到仓库对应路径，并能在线上直接打开：
+
+- `assets/css/style.css`
+- `assets/js/main.js`
+- `assets/js/changelog.js`
+
+只上传 HTML、JSON 和 CSS，而漏掉 `assets/js/changelog.js`，页面会一直停在加载状态。上线后可以检查：
+
+```text
+https://mc.minecraftweekend.cn/assets/js/changelog.js?v=20261026-2
+```
+
+应返回 JavaScript 源码，而不是 404 页面。当前资源版本已统一为 `?v=20261026-2`；浏览器仍显示旧样式时，用 `Ctrl + F5` 强制刷新。
+
 ---
 
 ## 7. 修改时需要同步的位置
@@ -248,9 +264,9 @@ mc.minecraftweekend.cn
 递增所有 HTML 中的资源版本号：
 
 ```text
-assets/css/style.css?v=20261026-1
-assets/js/main.js?v=20261026-1
-assets/js/changelog.js?v=20261026-1
+assets/css/style.css?v=20261026-2
+assets/js/main.js?v=20261026-2
+assets/js/changelog.js?v=20261026-2
 ```
 
 例如改为 `?v=20261027-1`。只更新 JSON 内容时不需要改版本号。
