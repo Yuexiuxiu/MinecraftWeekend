@@ -12,7 +12,9 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="https://mc.minecraftweekend.cn/privacy.html">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261024-2">
+  <link rel="alternate" type="application/rss+xml" title="周末愉快 · 网站更新" href="https://mc.minecraftweekend.cn/changelog.xml">
+  <link rel="alternate" type="application/rss+xml" title="周末愉快 · 服务器更新" href="https://mc.minecraftweekend.cn/server-changelog.xml">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261026-1">
 
   <meta property="og:locale" content="zh_CN">
   <meta property="og:type" content="website">
@@ -47,7 +49,7 @@
       "url": "https://mc.minecraftweekend.cn/",
       "name": "周末愉快"
     },
-    "dateModified": "2026-10-24"
+    "dateModified": "2026-10-26"
   }
   </script>
 </head>
@@ -68,6 +70,7 @@
         <a class="nav-link" href="index.html">首页</a>
         <a class="nav-link" href="index.html#servers">服务器</a>
         <a class="nav-link" href="index.html#notice">公告</a>
+        <a class="nav-link" href="changelog.html">更新日志</a>
         <a class="nav-link" href="index.html#faq">FAQ</a>
         <a class="nav-link" href="about.html">关于</a>
 
@@ -149,7 +152,7 @@
             </p>
             <p class="update-badge">
               <span class="status-dot" aria-hidden="true"></span>
-              最后更新：<time datetime="2026-10-24">2026 年 10 月 24 日</time>
+              最后更新：<time datetime="2026-10-26">2026 年 10 月 26 日</time>
             </p>
           </div>
         </div>
@@ -205,8 +208,8 @@
             </p>
             <p>
               本站的交互脚本仅用于：打开/关闭移动端菜单、显示二维码、在滚动时高亮当前导航、
-              显示当前年份、复制联系方式以及可选的滚动出现动画。这些功能不会创建账号，
-              也不会把内容写入本站数据库——因为本站没有数据库。
+              显示当前年份、复制联系方式、读取更新日志，以及在本地记录更新日志的已读状态。
+              这些功能不会创建账号，也不会把内容写入本站数据库——因为本站没有数据库。
             </p>
           </section>
 
@@ -250,8 +253,20 @@
             <p class="prose-kicker">04 / COOKIES</p>
             <h2 id="cookies-title">Cookie 与本地存储</h2>
             <p>
-              本站代码不主动设置用于广告、画像或跨站追踪的 Cookie，也不写入 localStorage 或 sessionStorage。
+              本站代码不主动设置用于广告、画像或跨站追踪的 Cookie。
               页面不会弹出“接受所有 Cookie”的追踪授权框，因为没有接入广告或行为分析脚本。
+            </p>
+            <p>
+              为了在网站日志和服务器日志中分别显示未读标记，本站会在你的浏览器
+              <strong>localStorage</strong> 中保存以下本地记录：
+            </p>
+            <ul class="policy-list">
+              <li><code>weekend-changelog-read-website-v1</code>：已读的网站版本编号；</li>
+              <li><code>weekend-changelog-read-server-v1</code>：已读的服务器版本编号。</li>
+            </ul>
+            <p>
+              这些记录只留在当前浏览器中，不会发送到本站服务器，也不会用于广告或用户画像。
+              你可以随时通过浏览器设置清除本站的本地存储；清除后，现有版本会重新显示为未读。
             </p>
             <p>
               托管平台可能出于安全防护、负载均衡、机器人识别或网络优化设置必要 Cookie。
@@ -368,15 +383,20 @@
           </div>
           <div>
             <h2>信息</h2>
+            <a href="changelog.html">网站日志</a>
+            <a href="server-changelog.html">服务器日志</a>
             <a href="about.html">关于我们</a>
             <a href="index.html#faq">常见问题</a>
             <a href="privacy.html" aria-current="page">隐私政策</a>
+            <a href="changelog.xml">RSS 订阅</a>
+            <a href="sitemap.xml">站点地图</a>
           </div>
           <div>
             <h2>联系</h2>
             <a href="mailto:lingyueyue148@163.com">lingyueyue148@163.com</a>
             <span>QQ 群 870774459</span>
             <span>QQ 频道 cdcvk4521a</span>
+            <a href="index.html#join">扫码加入</a>
           </div>
         </nav>
       </div>
@@ -394,6 +414,6 @@
 
   <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-toast></div>
 
-  <script src="assets/js/main.js?v=20261024-2" defer></script>
+  <script src="assets/js/main.js?v=20261026-1" defer></script>
 </body>
 </html>

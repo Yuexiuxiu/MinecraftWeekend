@@ -1,0 +1,159 @@
+{
+  "site": {
+    "name": "周末愉快",
+    "englishName": "Minecraftweekend",
+    "serverVersion": "26.50",
+    "latestVersion": "v1.3.0",
+    "updatedAt": "2026-10-26",
+    "description": "周末愉快网站版本变更记录。"
+  },
+  "entries": [
+    {
+      "id": "v1-3-0",
+      "version": "v1.3.0",
+      "date": "2026-10-26",
+      "title": "更新日志拆分为网站与游戏服务器两套",
+      "summary": "网站更新与游戏服务器更新分开展示：首页各取一条摘要，两个日志页可互相切换，RSS 与未读状态也分别维护。",
+      "important": true,
+      "tags": ["新增", "调整", "重要"],
+      "changes": [
+        {
+          "type": "新增",
+          "text": "新增独立的游戏服务器更新日志页面 server-changelog.html，以及对应的 server-changelog.json、server-changelog.xml。"
+        },
+        {
+          "type": "新增",
+          "text": "网站日志与服务器日志顶部增加分类切换，并各自提供 RSS 订阅入口。"
+        },
+        {
+          "type": "调整",
+          "text": "首页公告板分别读取网站与服务器最新一条摘要，并标注日志类型。"
+        },
+        {
+          "type": "调整",
+          "text": "未读状态按两份日志分别保存在 localStorage，互不影响。"
+        },
+        {
+          "type": "重要",
+          "text": "网站版本继续使用 v1.x.x；游戏服务器日志使用服务器版本号（当前为 26.50），两套版本不要混用。"
+        }
+      ]
+    },
+    {
+      "id": "v1-2-0",
+      "version": "v1.2.0",
+      "date": "2026-10-26",
+      "title": "版本时间线与更新日志上线",
+      "summary": "新增独立更新日志页、首页最近更新摘要、RSS 与未读标记。从现在起，记录版本只需更新 changelog.json，不再逐条修改 HTML。",
+      "important": true,
+      "tags": ["新增", "重要"],
+      "changes": [
+        {
+          "type": "新增",
+          "text": "新增 changelog.html 与 changelog.json，通过原生 fetch 读取并渲染版本记录。"
+        },
+        {
+          "type": "新增",
+          "text": "首页公告板联动更新日志，只显示最近 1–2 条摘要，并提供“查看完整日志”入口。"
+        },
+        {
+          "type": "新增",
+          "text": "支持按“新增 / 调整 / 修复 / 重要”筛选，重要变更使用醒目样式。"
+        },
+        {
+          "type": "新增",
+          "text": "新增 RSS 订阅、站内未读标记和二维码常驻提示。"
+        },
+        {
+          "type": "调整",
+          "text": "补充二维码弹层关闭按钮，并统一移动端行高、正文宽度和页脚快捷入口。"
+        },
+        {
+          "type": "重要",
+          "text": "后续更新只需维护 changelog.json；页面结构、筛选和首页摘要会自动更新。"
+        }
+      ]
+    },
+    {
+      "id": "v1-1-1",
+      "version": "v1.1.1",
+      "date": "2026-10-24",
+      "title": "二维码显示与移动端修复",
+      "summary": "修复二维码直接铺开的问题，改为悬停或点按后显示；补充关闭按钮，并调整移动端复制按钮与缓存版本号。",
+      "important": false,
+      "tags": ["调整", "修复"],
+      "changes": [
+        {
+          "type": "修复",
+          "text": "二维码不再在服务器卡片中直接展示，加入社区的二维码也默认收起。"
+        },
+        {
+          "type": "修复",
+          "text": "顶部二维码弹层补充关闭按钮，支持点击外部、按 Esc 和再次点按触发展开按钮关闭。"
+        },
+        {
+          "type": "调整",
+          "text": "移动端联系方式的复制按钮改为与信息同行，减少不必要的纵向占用。"
+        },
+        {
+          "type": "调整",
+          "text": "为 CSS 与 JavaScript 引用增加版本参数，降低浏览器继续使用旧缓存样式的概率。"
+        }
+      ]
+    },
+    {
+      "id": "v1-1-0",
+      "version": "v1.1.0",
+      "date": "2026-10-24",
+      "title": "品牌、域名与加入方式更新",
+      "summary": "站点更名为“周末愉快 / Minecraftweekend”，启用 mc.minecraftweekend.cn，加入 QQ 群与 QQ 频道二维码。",
+      "important": true,
+      "tags": ["新增", "调整", "重要"],
+      "changes": [
+        {
+          "type": "新增",
+          "text": "站点及服务器名称更新为“周末愉快”，英文名称统一为 Minecraftweekend。"
+        },
+        {
+          "type": "新增",
+          "text": "新增 QQ 群 870774459、QQ 频道 cdcvk4521a 和联系邮箱。"
+        },
+        {
+          "type": "调整",
+          "text": "只保留一个服务器：生存模式，版本 26.50；服务器地址统一在 QQ 群内获取。"
+        },
+        {
+          "type": "调整",
+          "text": "全站域名、canonical、Sitemap 与 CNAME 更新为 mc.minecraftweekend.cn。"
+        },
+        {
+          "type": "重要",
+          "text": "QQ 群与 QQ 频道二维码正式上线，移除旧占位内容与 Discord 信息。"
+        }
+      ]
+    },
+    {
+      "id": "v1-0-0",
+      "version": "v1.0.0",
+      "date": "2026-10-18",
+      "title": "周末愉快站点上线",
+      "summary": "完成首版纯静态站点：首页、关于、隐私政策、自定义 404 与服务器介绍。",
+      "important": false,
+      "tags": ["新增"],
+      "changes": [
+        {
+          "type": "新增",
+          "text": "上线首页、关于页、隐私政策和自定义 404 页面。"
+        },
+        {
+          "type": "新增",
+          "text": "确立深色 Minecraft 像素方块视觉，所有装饰由 CSS 绘制。"
+        },
+        {
+          "type": "新增",
+          "text": "完成基础 SEO、Open Graph、robots.txt、sitemap.xml 与移动端适配。"
+        }
+      ]
+    }
+  ]
+}

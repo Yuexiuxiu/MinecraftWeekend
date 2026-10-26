@@ -4,394 +4,333 @@
 
 - 线上地址：<https://mc.minecraftweekend.cn/>
 - GitHub 仓库：<https://github.com/Yuexiuxiu/MinecraftWeekend>
-- 技术栈：纯 HTML + CSS + JavaScript，无框架、无构建步骤、无后端、无数据库、无登录、无支付。
-- 视觉：深色 Minecraft 像素方块风格；草方块、树、云、404 方块等装饰均由 CSS 绘制。
-- 当前服务器信息：**周末愉快 / Minecraftweekend**，版本 **26.50**，生存模式，只有一个服务器，无需正版验证。
-- 加入方式：QQ 群 `870774459`；QQ 频道 `cdcvk4521a`；邮箱 `lingyueyue148@163.com`。
+- 技术栈：纯 HTML + CSS + JavaScript，无框架、无后端、无数据库
+- 当前服务器：**周末愉快 / Minecraftweekend**，版本 **26.50**，生存模式，只有一个服务器
+- QQ 群：`870774459`；QQ 频道：`cdcvk4521a`；邮箱：`lingyueyue148@163.com`
 
-> 代码中没有服务器 IP 或连接地址。页面统一提示“进群获取地址”，这是有意为之；
-> 如果要公开服务器地址，请同时修改首页服务器卡片和 FAQ。
+> 页面不公开服务器 IP，统一提示“进群获取地址”。如需公开地址，请同时修改首页服务器卡片和 FAQ。
 
 ---
 
-## 1. 当前文件结构
+## 1. 文件结构
 
 ```text
 D:\Website\
 ├─ index.html                    # 首页
-├─ about.html                    # 关于周末愉快
+├─ changelog.html                # 网站更新日志 / 版本时间线
+├─ server-changelog.html         # 游戏服务器更新日志 / 版本时间线
+├─ about.html                    # 关于
 ├─ privacy.html                  # 隐私政策
-├─ 404.html                      # 自定义 404（使用根路径资源）
+├─ 404.html                      # 自定义 404
+├─ changelog.json                # 网站日志数据源（日常只需改这里）
+├─ server-changelog.json         # 游戏服务器日志数据源
+├─ changelog.xml                 # 网站日志 RSS 2.0
+├─ server-changelog.xml          # 游戏服务器日志 RSS 2.0
 ├─ assets/
 │  ├─ css/
-│  │  └─ style.css               # 全站样式与响应式
+│  │  └─ style.css               # 全站样式 / 响应式 / changelog / QR 弹层
 │  ├─ js/
-│  │  └─ main.js                 # 导航、二维码面板、滚动高亮、复制等
+│  │  ├─ main.js                 # 导航、二维码、滚动高亮、复制、全局 QR 弹层
+│  │  └─ changelog.js            # 两份 JSON、时间线、筛选、未读、状态兜底
 │  └─ img/
-│     ├─ favicon.svg             # 草方块图标
-│     ├─ og-cover.png            # 1200×630 社交分享封面
-│     ├─ qq-group-qr.png        # QQ 群二维码（已裁剪、保留扫码留白）
-│     └─ qq-channel-qr.png      # QQ 频道二维码
+│     ├─ favicon.svg
+│     ├─ og-cover.png
+│     ├─ qq-group-qr.png
+│     └─ qq-channel-qr.png
 ├─ robots.txt
 ├─ sitemap.xml
-├─ CNAME                         # GitHub Pages 自定义域名
-├─ .nojekyll                     # 跳过 GitHub Pages 的 Jekyll 处理
+├─ CNAME                         # mc.minecraftweekend.cn
+├─ .nojekyll
 └─ README.md
 ```
 
 ---
 
-## 2. 本次内容改造说明
-
-### 已完成的调整
-
-1. 站点和服务器品牌改为 **周末愉快 / Minecraftweekend**。
-2. 首页宣传语改为：
-
-   > 愉快留在周末，用方块搭建我的世界
-
-   “方块”两个字使用荧光绿背景块高亮。
-3. 服务器信息改为只有一个服务器：
-   - 名称：周末愉快
-   - 英文名：Minecraftweekend
-   - 模式：生存
-   - 版本：26.50
-   - 正版验证：不需要
-   - 地址：加入 QQ 群获取
-4. 联系方式：
-   - QQ 群：`870774459`
-   - QQ 频道：`cdcvk4521a`
-   - 邮箱：`lingyueyue148@163.com`
-5. 顶部导航“加入社区”：
-   - 桌面端鼠标悬停显示二维码；
-   - 点击也能打开二维码；
-   - 手机端点按打开；
-   - 同时展示 QQ 群和 QQ 频道二维码。
-6. 加入社区区域不再直接铺开二维码：
-   - 默认只显示“查看 / 收起二维码”按钮；
-   - 桌面端悬停或点击按钮，才显示 QQ 群与 QQ 频道二维码；
-   - 手机端点按按钮显示；
-   - 群号和频道号仍然可以直接复制。
-7. 顶部导航新增**滚动高亮**：
-   - 阅读首页、服务器、公告、FAQ、加入社区等区域时，导航会自动移动到对应高亮状态；
-   - 各章节通过 `data-spy-target` 与页面区块关联。
-8. FAQ 已更新：
-   - 不需要正版，提醒保护装备、谨防同名玩家顶替；
-   - 游戏服务器位于国内，正常可直连；
-   - 页面使用 GitHub Pages 托管，网页加载速度仍可能受到跨境线路影响。
-9. 域名与 CNAME 更新为 `mc.minecraftweekend.cn`。
-10. `robots.txt`、`sitemap.xml`、canonical、Open Graph、JSON-LD 全部同步新域名。
-11. 重新生成了 OG 分享封面和 QQ 二维码资源。
-12. 给 CSS/JS 引用加了版本参数 `?v=20261024-2`，避免浏览器继续使用旧版样式或脚本。
-
-> **重要：** 页面 HTML、CSS、JS 必须一起更新。只更新 HTML 而浏览器仍使用旧
-> `style.css` 时，会出现服务器卡片布局错乱、二维码样式失效等现象。
-> 上传最新文件后请使用 `Ctrl + F5` 强制刷新。
-
----
-
-## 3. 本地预览
-
-项目不需要安装依赖或构建。进入目录后启动静态服务器：
+## 2. 本地预览
 
 ```powershell
 cd D:\Website
 python -m http.server 8080 --bind 127.0.0.1
 ```
 
-浏览器打开：
-
-```text
-http://127.0.0.1:8080/
-```
-
-也可以使用：
-
-```bash
-npx serve .
-```
-
-不要直接双击 HTML 文件，因为 `404.html` 和部分根路径链接需要通过 HTTP 服务器访问。
+打开 <http://127.0.0.1:8080/>。不要直接双击 HTML，因为 changelog 使用 `fetch` 读取同目录 JSON，需要通过 HTTP 访问。
 
 ---
 
-## 4. 如何把更新发布到 GitHub Pages
+## 3. 更新日志系统（网站 / 游戏服务器）
 
-这个目录不是自动同步的 Git 工作副本。请把以下文件上传/推送到
-<https://github.com/Yuexiuxiu/MinecraftWeekend> 的 `main` 分支：
+### 3.1 两份日志
 
 ```text
-index.html
-about.html
-privacy.html
-404.html
-assets/css/style.css
-assets/js/main.js
-assets/img/og-cover.png
-assets/img/favicon.svg
-assets/img/qq-group-qr.png
-assets/img/qq-channel-qr.png
-robots.txt
-sitemap.xml
-CNAME
-.nojekyll
-README.md
+changelog.json
+      │  fetch（同源静态文件，无后端）
+      ├──> changelog.html：网站更新日志
+      └──> index.html：首页公告板，取最新 1 条
+
+server-changelog.json
+      │  fetch
+      ├──> server-changelog.html：游戏服务器更新日志
+      └──> index.html：首页公告板，取最新 1 条
 ```
 
-### 使用 Git 命令行
+- 两个页面顶部都有 **网站更新 / 游戏服务器更新** 切换标签。
+- 网站日志记录界面、功能、SEO、修复等站点变更。
+- 服务器日志记录游戏版本、玩法、规则、性能与修复。
+- 首页公告板各取最新 1 条，共 2 条摘要，并标注“网站 / 游戏服务器”。
+- 两份日志共用 `assets/js/changelog.js`，通过 `data-changelog-source` 与 `data-changelog-kind` 配置。
+- 不用数据库，不用构建工具，不需要改 HTML。
+- 支持标签筛选：**新增 / 调整 / 修复 / 重要**。
+- 重要版本有独立的高亮边框、节点和日期标签。
+- 详情默认折叠，点击条目下的“展开变更明细”查看。
+- 未读状态按日志分别保存在浏览器 `localStorage`，不会发送到服务器。
+- 网络失败时有“重新加载 / 前往 QQ 群”的兜底；筛选无结果时有空状态。
 
-在你本地的仓库副本中：
+### 3.2 数据结构
+
+两个 JSON 使用相同结构。`changelog.json` 的顶层结构：
+
+```json
+{
+  "site": {
+    "name": "周末愉快",
+    "englishName": "Minecraftweekend",
+    "serverVersion": "26.50",
+    "latestVersion": "v1.3.0",
+    "updatedAt": "2026-10-26",
+    "description": "周末愉快网站版本变更记录。"
+  },
+  "entries": []
+}
+```
+
+`server-changelog.json` 的 `site.latestVersion` 使用服务器版本，例如 `26.50`，`serverVersion` 同样为 `26.50`。
+
+单条版本：
+
+```json
+{
+  "id": "v1-3-0",
+  "version": "v1.3.0",
+  "date": "2026-10-26",
+  "title": "更新日志拆分为网站与游戏服务器两套",
+  "summary": "一句话摘要，会显示在首页公告板和日志页。",
+  "important": true,
+  "tags": ["新增", "重要"],
+  "changes": [
+    { "type": "新增", "text": "具体变更内容。" },
+    { "type": "调整", "text": "具体变更内容。" },
+    { "type": "修复", "text": "具体变更内容。" },
+    { "type": "重要", "text": "重要说明。" }
+  ]
+}
+```
+
+字段说明：
+
+| 字段 | 说明 |
+| --- | --- |
+| `id` | 唯一锚点，建议使用 `v1-2-0` 形式，用于页面 `#v1-2-0` |
+| `version` | 显示的版本徽章；网站用 `v1.3.0`，服务器用 `26.50` |
+| `date` | `YYYY-MM-DD`，排序依据 |
+| `title` | 本次版本标题 |
+| `summary` | 摘要，首页会各取最新一条 |
+| `important` | 是否为重点版本 |
+| `tags` | 只能是 `新增`、`调整`、`修复`、`重要` |
+| `changes` | 折叠详情中的变更条目 |
+
+> 网站版本与游戏服务器版本是两个概念：网站日志使用 `v1.x.x`；服务器日志使用游戏版本号，例如 `26.50`。
+
+### 3.3 新增一个版本（不用改 HTML）
+
+**网站更新：**
+
+1. 打开 `changelog.json`。
+2. 在 `entries` 数组最前面复制一个对象并按实际情况修改。
+3. 更新 `site.latestVersion` 和 `site.updatedAt`。
+4. 保存并推送，`changelog.html` 和首页会自动读取。
+
+**游戏服务器更新：**
+
+1. 打开 `server-changelog.json`。
+2. 在 `entries` 数组最前面添加服务器版本记录。
+3. 更新 `site.latestVersion`、`site.serverVersion` 和 `site.updatedAt`。
+4. 保存并推送，`server-changelog.html` 和首页会自动读取。
+
+日期即使不按顺序填写也没关系，前端会按 `date` 倒序排序。`id` 在两份日志内部各自唯一即可；跨日志重复不会冲突，但建议加 `server-` 前缀便于区分。
+
+> `server-changelog.json` 目前只放了 26.50 的初始版本说明，没有虚构历史开服记录。后续请按真实服务器更新继续追加。
+
+### 3.4 未读标记
+
+- 网站日志存储键：`weekend-changelog-read-website-v1`
+- 服务器日志存储键：`weekend-changelog-read-server-v1`
+- 内容：各自已读版本的 `id` 数组
+- 只存在当前浏览器的 `localStorage`，两份日志互不影响
+- 游客首次访问时，当前所有版本显示为“未读”
+- 点击“全部标为已读”或展开某个版本详情后，状态会更新
+- 清除浏览器站点数据即可重置
+
+隐私政策已对应说明这两个键。
+
+### 3.5 RSS
+
+- 网站日志：<https://mc.minecraftweekend.cn/changelog.xml>
+- 游戏服务器日志：<https://mc.minecraftweekend.cn/server-changelog.xml>
+- 两个页面头部均已加入对应的 RSS 自动发现链接，页面内也有 RSS 入口。
+- `changelog.xml` / `server-changelog.xml` 都是**静态 RSS 镜像**。新增日志时，站内页面只需要改 JSON；如果希望 RSS 读者也收到新条目，请同步更新对应 XML（或后续再加 GitHub Action 自动生成）。
+
+### 3.6 加载失败 / 空状态
+
+- 请求失败：显示“更新日志暂时加载失败”，提供重新加载按钮和 QQ 群入口。
+- 数据为空：显示空状态，不显示错误堆栈。
+- 筛选无结果（例如服务器日志暂无“修复”条目）：显示“暂时没有服务器更新”的空状态。
+- 没有 JavaScript：显示 `<noscript>` 提示，直接指向对应 JSON。
+
+---
+
+## 4. 首屏与性能
+
+当前实现尽量保持轻量：
+
+- 不请求外部字体、CSS、JS、图片或 CDN。
+- 字体使用 `system-ui` 系统字体栈。
+- 二维码图片全部 `loading="lazy"`；首屏不加载二维码。
+- 更新日志通过 fetch 异步读取，不阻塞首屏 HTML/CSS。
+- 主样式和主脚本使用 `?v=20261026-1` 版本参数，避免旧缓存。
+- 页面体积不大，GitHub Pages 会进行传输压缩。
+
+> “首屏 1.5 秒”取决于访问者网络、DNS、GitHub Pages 跨境链路和设备性能，静态站只能尽量减少阻塞资源，不能承诺所有网络环境都低于 1.5 秒。
+
+---
+
+## 5. 二维码入口
+
+1. 顶部导航“加入社区”：桌面悬停、点击或手机点按显示 QQ 群与 QQ 频道二维码。
+2. 加入社区区域“查看 / 收起二维码”：悬停或点击展开，带显式关闭按钮。
+3. 右下角常驻“扫码加入”提示：点击打开居中二维码弹层，带遮罩、关闭按钮和焦点管理。
+4. 弹层支持：点击关闭按钮、点击遮罩、按 Esc 关闭；关闭后焦返回触发按钮。
+
+所有二维码图片均为本地静态资源，并保留扫码留白。
+
+---
+
+## 6. 部署到 GitHub Pages
 
 ```powershell
+cd <你的仓库目录>
 git add .
-git commit -m "更新周末愉快网站内容与二维码"
+git commit -m "更新站点与更新日志"
 git push origin main
 ```
 
-### 使用 GitHub 网页上传
-
-1. 打开仓库；
-2. 进入要替换的文件；
-3. 使用右上角 **Edit** 或 **Upload files** 上传；
-4. 保持原有目录结构，尤其是 `assets/img/` 下的二维码文件；
-5. 提交到 `main` 分支。
-
-GitHub Pages 通常会在推送后几分钟内自动重新发布。刷新线上页面时建议使用：
-
-```text
-Ctrl + F5
-```
-
-避免浏览器或 CDN 缓存导致看到旧版本。
-
-> 本次修改无法直接推送到你的 GitHub 仓库：当前环境没有该仓库的 Git 凭据。
-> 请用上述任一方式提交文件，提交后线上会自动更新。
-
----
-
-## 5. GitHub Pages 与域名配置
-
-### 5.1 当前仓库设置
-
-在 GitHub 仓库中确认：
+GitHub 仓库：
 
 1. **Settings → Pages**
 2. Source：**Deploy from a branch**
-3. Branch：`main`
-4. Folder：`/ (root)`
-5. Custom domain 填：`mc.minecraftweekend.cn`
-6. 等 DNS 检查通过后勾选 **Enforce HTTPS**
+3. Branch：`main`，目录 `/ (root)`
+4. Custom domain：`mc.minecraftweekend.cn`
+5. 域名检查通过后启用 **Enforce HTTPS**
 
-仓库根目录的 `CNAME` 文件内容已经是：
+仓库根目录 `CNAME` 内容应保持：
 
 ```text
 mc.minecraftweekend.cn
 ```
 
-### 5.2 现有 DNS 服务商需要保持的记录
-
-| 字段 | 填写内容 |
-| --- | --- |
-| 记录类型 | `CNAME` |
-| 主机记录 | `mc` |
-| 记录值 | `yuexiuxiu.github.io` |
-| TTL | `600` 秒或自动 |
-| 代理状态 | DNS only / 不代理（如果有） |
-
-说明：
-
-- 不要填仓库地址、`https://` 或 `/MinecraftWeekend`。
-- 同一个 `mc` 主机名不要同时保留旧的 A / AAAA / CNAME 记录。
-- DNS 生效时间从几分钟到数小时不等；GitHub 证书签发可能还需要一段时间。
-- 如果之后更换 GitHub 用户名或域名，需要同步修改 `CNAME`、DNS、canonical、OG、Sitemap 和 robots。
+更新完文件后使用 `Ctrl + F5` 强制刷新，避免浏览器继续使用旧版 CSS/JS。
 
 ---
 
-## 6. 以后如何修改内容
+## 7. 修改时需要同步的位置
 
-### 6.1 修改服务器版本号
+### 7.1 修改 CSS / JS 后
 
-当前版本号是 `26.50`，出现在：
-
-- `index.html` 首页 Hero 文案、世界卡片、服务器卡片、FAQ；
-- `about.html` 页面介绍、侧栏；
-- `README.md`；
-- 首页 JSON-LD 的 FAQ 文本；
-- OG 分享图 `assets/img/og-cover.png`（图片需重新导出）。
-
-如果版本升级，建议先在项目里搜索：
-
-```powershell
-Select-String -Path *.html,README.md -Pattern '26\.50'
-```
-
-然后同步修改所有位置。版本号只是一行文案，页面本身不读取服务器状态。
-
-### 6.2 更换 QQ 群 / 频道 / 邮箱
-
-当前值：
+递增所有 HTML 中的资源版本号：
 
 ```text
-QQ 群：870774459
-QQ 频道：cdcvk4521a
-邮箱：lingyueyue148@163.com
+assets/css/style.css?v=20261026-1
+assets/js/main.js?v=20261026-1
+assets/js/changelog.js?v=20261026-1
 ```
 
-涉及位置：
+例如改为 `?v=20261027-1`。只更新 JSON 内容时不需要改版本号。
 
-- `index.html` 顶部二维码面板、服务器卡片、加入社区区、FAQ、页脚；
-- `about.html` 加入说明、联系方式、侧栏、页脚；
-- `privacy.html` 联系我们、页脚；
-- `404.html` 顶部二维码面板、页脚；
-- 各页二维码图片 `assets/img/qq-group-qr.png`、`assets/img/qq-channel-qr.png`。
+### 7.2 修改域名后
 
-复制按钮需要同时修改可见文本和按钮上的 `data-copy`：
+同步更新：
 
-```html
-<strong>870774459</strong>
-<button
-  class="copy-btn"
-  type="button"
-  data-copy="870774459"
-  data-copy-name="QQ 群号">
-  复制
-</button>
-```
+- 所有页面的 canonical、`og:url`
+- JSON-LD 内的 URL
+- `robots.txt` 的 Sitemap 地址
+- `sitemap.xml`
+- `changelog.xml` / `server-changelog.xml` 的站点链接和 item link
+- `CNAME`（GitHub Pages）
+- README
 
-### 6.3 更换二维码图片
+### 7.3 修改服务器版本 26.50 时
 
-当前使用的是已经裁剪好的两张图：
+搜索并同步：
 
-- `assets/img/qq-group-qr.png`
-- `assets/img/qq-channel-qr.png`
+- `index.html`
+- `about.html`
+- `server-changelog.html`（`data-latest-version` 回退值）
+- `server-changelog.json`（新增一条服务器版本记录）
+- `server-changelog.xml`（可选，同步服务器 RSS）
+- `README.md`
+- 首页 FAQ 与服务器卡片中的 26.50
 
-替换时建议：
+### 7.4 修改 QQ / 邮箱
 
-- 保持文件名不变，避免同时修改多处 HTML；
-- 使用 PNG 或 WebP；
-- 保留二维码四周的白色留白（静区），不要把图案裁得太贴边；
-- 手机扫码测试通过后再提交；
-- 页面中每张二维码的 `alt` 文本也要和实际内容一致。
+涉及：
 
-### 6.4 修改首页宣传语
-
-首页宣传语位于 `index.html`：
-
-```html
-<h1 class="hero-title" id="hero-title">
-  愉快留在周末，<br>
-  用<span class="highlight">方块</span>搭建<br>
-  我的世界
-</h1>
-```
-
-- `class="highlight"` 就是荧光绿背景块；
-- 如果修改宣传语，注意测试桌面与手机端换行；
-- 同步更新 `<title>`、`meta description`、Open Graph 和 JSON-LD 中的站点描述。
-
-### 6.5 滚动高亮
-
-首页导航按钮和链接通过以下属性与章节关联：
-
-```html
-<a href="#servers" data-spy-target="#servers">服务器</a>
-```
-
-对应区块必须有相同的 `id`：
-
-```html
-<section id="servers">...</section>
-```
-
-如果要新增导航项：
-
-1. 给目标区块增加唯一 `id`；
-2. 给导航项增加 `data-spy-target="#那个id"`；
-3. 保持导航顺序与页面阅读顺序大致一致；
-4. 重新验证滚动高亮。
-
-### 6.6 二维码弹层
-
-二维码默认不显示。页面中共有两处入口：
-
-1. **顶部导航**：桌面端鼠标悬停“加入社区”或点击/触屏点按；
-2. **加入社区区域**：悬停或点击“查看 / 收起二维码”按钮。
-
-两处使用统一结构：
-
-```html
-<div data-qr-root>
-  <button data-qr-trigger aria-expanded="false" aria-controls="qr-panel">查看二维码</button>
-  <div id="qr-panel" data-qr-panel hidden>...</div>
-</div>
-```
-
-`assets/js/main.js` 同时处理：
-
-- 桌面端 `mouseenter` 打开；
-- 按钮点击/触屏点按切换；
-- 点击外部、按 Esc、焦点移出后关闭；
-- 移动端菜单收起时自动关闭二维码。
-
-每处面板的 `id` 必须唯一，`aria-controls` 要与对应面板 `id` 一致。
-
-> CSS/JS 的引用带有 `?v=20261024-2`。以后修改 `style.css` 或 `main.js`
-> 时，请同时递增该版本号（例如 `?v=20261025-1`），避免访客长期看到旧缓存。
+- `index.html` 的加入区、二维码面板、FAQ、页脚
+- `about.html`、`privacy.html`、`404.html`、`changelog.html`、`server-changelog.html` 的页脚
+- 复制按钮的 `data-copy`
+- 二维码图片 `assets/img/qq-group-qr.png`、`assets/img/qq-channel-qr.png`
+- 全局二维码弹层中的文本与图片在 `assets/js/main.js`
 
 ---
 
-## 7. 上线前检查清单
+## 8. SEO 与站点地图
 
-- [ ] 首页、关于、隐私政策、404 正常打开
-- [ ] 首页宣传语与“方块”荧光绿高亮正确
-- [ ] 全站只有“周末愉快”这一个服务器
-- [ ] 版本号 26.50 在所有位置一致
-- [ ] QQ 群 870774459 可复制
-- [ ] QQ 频道 cdcvk4521a 可复制
-- [ ] 邮箱 lingyueyue148@163.com 的 `mailto:` 可打开
-- [ ] 初始页面没有直接展开二维码
-- [ ] 顶部导航“加入社区”悬停/点击能显示两张二维码
-- [ ] 加入社区区域的“查看 / 收起二维码”按钮可以展开和收起
-- [ ] 安卓/iOS 点按菜单里的“加入社区”能显示二维码
-- [ ] 两张二维码都能被手机实际扫描
-- [ ] 页面滚动时顶栏高亮会随章节移动
-- [ ] 手机端没有横向滚动条
-- [ ] 404 页面与所有资源正常
-- [ ] `CNAME` 仍为 `mc.minecraftweekend.cn`
-- [ ] `robots.txt`、`sitemap.xml` 使用新域名
-- [ ] https://mc.minecraftweekend.cn/ 证书有效
-- [ ] GitHub 仓库已提交并触发 Pages 重新发布
-
-### 快速排查
-
-| 现象 | 检查 |
-| --- | --- |
-| 页面还是旧内容 | 等 GitHub Pages 构建完成，使用 Ctrl+F5；检查仓库 `main` 是否已更新 |
-| 服务器卡片排版错乱、二维码直接铺开 | 多半是旧 `style.css` 缓存。确认最新 `assets/css/style.css` 已上传，并强制刷新页面 |
-| 二维码弹层不出现 | 确认 `assets/js/main.js` 已上传；查看浏览器控制台；确认没有被广告拦截器隐藏 |
-| 二维码扫不出来 | 确认图片未被错误裁剪或压缩；保留白色留边 |
-| 导航高亮不移动 | 检查 `data-spy-target` 与区块 `id` 是否完全一致 |
-| 自定义域名失效 | 检查仓库根目录 `CNAME` 内容，以及 DNS 的 CNAME 是否指向 `yuexiuxiu.github.io` |
-| HTTPS 未生效 | 等 GitHub 证书签发；Custom domain 检查通过后再启用 Enforce HTTPS |
+- 网站更新日志：`https://mc.minecraftweekend.cn/changelog.html`
+- 游戏服务器更新日志：`https://mc.minecraftweekend.cn/server-changelog.html`
+- XML Sitemap：`https://mc.minecraftweekend.cn/sitemap.xml`
+- 网站 RSS：`https://mc.minecraftweekend.cn/changelog.xml`
+- 服务器 RSS：`https://mc.minecraftweekend.cn/server-changelog.xml`
+- 页面包含 title、description、canonical、Open Graph、Twitter Card、JSON-LD
+- 两个日志页各自输出 `CollectionPage`、`BreadcrumbList`，以及根据 JSON 生成的 `ItemList`
+- 页脚和 `404.html` 均有网站日志、服务器日志、RSS、站点地图入口
 
 ---
 
-## 8. 合规与风险提示
+## 9. 上线检查
 
-1. **网站与游戏服务器分离。** 当前网页使用 GitHub Pages 托管在境外；游戏服务器按你的说明位于国内。两者使用不同托管与网络路径，网页访问速度与游戏连接速度不能直接等同。
-2. **网页可能受跨境线路影响。** GitHub Pages 在中国大陆的访问速度和稳定性可能波动；如果网页也需要境内稳定访问，应完成 ICP 备案并使用合规的境内托管，不能使用绕过备案的方式。
-3. **游戏服务器需遵守其自身的接入、备案与运营要求。** 本文不提供规避监管或灰色接入方法；请按实际服务商和适用规则自查。
-4. **无需正版验证的服务器存在同名顶替风险。** 页面已明确提示玩家保护装备，发现异常及时联系管理员。
-5. **隐私说明要与实际一致。** 页面当前没有登录、表单、支付、独立统计或数据库；托管方仍可能记录基础访问日志。若加入统计、评论或其他第三方脚本，请更新 `privacy.html`。
-6. **版权与商标。** 本页不是 Mojang 官方页面，与 Mojang Studios / Microsoft 无隶属关系；Minecraft 名称及相关商标归其权利人所有。页面装饰由 CSS 绘制，不包含 Mojang 官方贴图。
+- [ ] 首页最近更新显示 2 条（网站 1 条 + 服务器 1 条），按时间倒序
+- [ ] 顶部版本入口可进入网站更新日志
+- [ ] `changelog.html` 加载 5 条网站记录
+- [ ] `server-changelog.html` 加载服务器版本 26.50 记录
+- [ ] 两个日志页顶部“网站更新 / 游戏服务器更新”切换正常
+- [ ] “重要”筛选只显示重要版本
+- [ ] 展开详情后显示变更条目
+- [ ] “全部标为已读”有效，刷新后各自未读状态保留
+- [ ] 断开/删除 JSON 时显示加载失败，而不是空白
+- [ ] 空数组或筛选无结果时显示空状态
+- [ ] QQ 群/频道二维码只在操作后显示，默认不铺开
+- [ ] 桌面悬停、手机点按顶部“加入社区”都可以打开二维码
+- [ ] 全局二维码弹层关闭按钮可用，Esc 可关闭
+- [ ] 390px 移动端无横向滚动
+- [ ] 移动端正文行高为 1.8
+- [ ] `sitemap.xml` 已包含两个日志页
+- [ ] RSS `changelog.xml`、`server-changelog.xml` 均可被解析
+- [ ] GitHub Pages 部署成功，HTTPS 正常
 
 ---
 
-## 9. 官方参考
+## 10. 合规与隐私
 
-- GitHub Pages 自定义域名：  
-  <https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site>
-- GitHub Pages 使用限制：  
-  <https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits>
-- GitHub 隐私声明：  
-  <https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement>
+- 更新日志的已读状态只保存在浏览器 `localStorage`，不发送到服务器；详见 `privacy.html`。
+- 网站使用 GitHub Pages 托管，访问时托管平台可能处理基础日志。
+- 游戏服务器是否要求备案、运营许可或其他手续，应按实际服务商与适用规则自行核对。
+- 不要使用绕过备案、隐藏源站规避监管或灰色接入方案。
+- 本站非 Mojang 官方站点，Minecraft 名称及相关商标归其权利人所有。
