@@ -451,6 +451,164 @@
     reduceMotionQuery.addListener(handleMotionPreference);
   }
 
+  /* ---------- 8. 常驻二维码提示与二维码弹层 ---------- */
+  var setupQrDialog = function () {
+    if (document.querySelector("[data-qr-dialog]")) {
+      return;
+    }
+
+    var hint = document.createElement("button");
+    hint.type = "button";
+    hint.className = "qr-hint";
+    hint.setAttribute("data-qr-hint", "");
+    hint.setAttribute("aria-haspopup", "dialog");
+    hint.setAttribute("aria-controls", "qr-dialog");
+    hint.setAttribute("aria-expanded", "false");
+    hint.innerHTML =
+      '<span class="qr-hint__icon" aria-hidden="true"></span>' +
+      '<span class="qr-hint__copy">' +
+      '<strong>扫码加入</strong>' +
+      "<small>QQ 群 870774459</small>" +
+      "</span>";
+
+    var dialog = document.createElement("div");
+    dialog.className = "qr-dialog";
+    dialog.id = "qr-dialog";
+    dialog.setAttribute("data-qr-dialog", "");
+    dialog.hidden = true;
+    dialog.innerHTML =
+      '<div class="qr-dialog__backdrop" data-qr-dialog-close aria-hidden="true"></div>' +
+      '<div class="qr-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="qr-dialog-title" tabindex="-1">' +
+      '<button class="qr-dialog__close" type="button" data-qr-dialog-close aria-label="关闭二维码弹层">×</button>' +
+      '<p class="qr-panel-kicker">JOIN THE WORLD</p>' +
+      '<h2 id="qr-dialog-title">扫码加入周末愉快</h2>' +
+      '<p class="qr-dialog__lead">手机 QQ 扫一扫；群号与频道号也可以直接在加入社区区域复制。</p>' +
+      '<div class="qr-dialog__grid">' +
+      '<figure class="qr-figure">' +
+      '<img src="/assets/img/qq-group-qr.png" alt="周末愉快 QQ 群二维码，群号 870774459" width="1000" height="1000" loading="lazy" decoding="async">' +
+      '<figcaption><span>QQ 群</span><strong>870774459</strong></figcaption>' +
+      "</figure>" +
+      '<figure class="qr-figure">' +
+      '<img src="/assets/img/qq-channel-qr.png" alt="周末愉快 QQ 频道二维码，频道号 cdcvk4521a" width="1000" height="1000" loading="lazy" decoding="async">' +
+      '<figcaption><span>QQ 频道</span><strong>cdcvk4521a</strong></figcaption>' +
+      "</figure>" +
+      "</div>" +
+      '<p class="qr-dialog__foot"><span>QQ 群 870774459 · 频道 cdcvk4521a</span><a href="/index.html#join">查看详细加入方式 →</a></p>' +
+      "</div>";
+
+    document.body.appendChild(hint);
+    document.body.appendChild(dialog);
+
+    var panel = dialog.querySelector(".qr-dialog__panel");
+    var closeButtons = dialog.querySelectorAll("[data-qr-dialog-close]");
+    var lastFocused = null;
+    var isOpen = false;
+
+    var getFocusable = function () {
+      return Array.prototype.slice
+        .call(
+          dialog.querySelectorAll(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        )
+        .filter(function (element) {
+          return element.offsetParent !== null;
+        });
+    };
+
+    var openDialog = function () {
+      if (isOpen) {
+        return;
+      }
+
+      lastFocused = document.activeElement;
+      if (!lastFocused || lastFocused === document.body) {
+        lastFocused = hint;
+      }
+      dialog.hidden = false;
+      isOpen = true;
+      hint.setAttribute("aria-expanded", "true");
+      body.classList.add("qr-dialog-open");
+
+      var close = dialog.querySelector(".qr-dialog__close");
+      if (close) {
+        close.focus();
+      }
+    };
+
+    var closeDialog = function () {
+      if (!isOpen) {
+        return;
+      }
+
+      dialog.hidden = true;
+      isOpen = false;
+      hint.setAttribute("aria-expanded", "false");
+      body.classList.remove("qr-dialog-open");
+
+      if (lastFocused && typeof lastFocused.focus === "function") {
+        window.setTimeout(function () {
+          lastFocused.focus();
+        }, 0);
+      }
+    };
+
+    hint.addEventListener("click", function () {
+      if (dialog.hidden) {
+        openDialog();
+      } else {
+        closeDialog();
+      }
+    });
+
+    closeButtons.forEach(function (button) {
+      button.addEventListener("click", closeDialog);
+    });
+
+    dialog.addEventListener("click", function (event) {
+      var link = event.target.closest("a");
+      if (link) {
+        closeDialog();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (!isOpen) {
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeDialog();
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      var focusable = getFocusable();
+      if (!focusable.length) {
+        event.preventDefault();
+        panel.focus();
+        return;
+      }
+
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  };
+
+  setupQrDialog();
+
   // 给脚本自身一个可用标记，方便未来扩展样式，不影响无脚本访问
   root.classList.add("js-ready");
 })();
